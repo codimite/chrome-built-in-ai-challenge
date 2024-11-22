@@ -391,7 +391,7 @@ function handleTextSelection(event: MouseEvent): void {
  */
 function positionPopup(container: HTMLElement, x: number, y: number): void {
     container.style.left = `${x}px`;
-    container.style.top = `${y - container.offsetHeight - 10}px`; // Adjust as needed
+    container.style.top = `${y - container.offsetHeight - 50}px`; // Adjust as needed //50px here makes the popup appear above the selected text TODO: make this dynamic from text size
     container.style.zIndex = '10000'; // Ensure it's on top
 }
 
