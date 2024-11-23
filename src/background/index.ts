@@ -86,7 +86,14 @@ async function rewrite(prompt: string) {
     //TODO: handle if rewriterModel not initialized
     try {
         console.log("prompt in rewrite:", prompt)
-        const result = await rewriterModel.prompt(prompt);
+        // const result = await rewriterModel.prompt(prompt);//DEBUG: remove
+
+        // sleep for 5 seconds
+        function sleep(ms: number) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        await sleep(5000);
+        const result = "test string" //DEBUG: remove
         console.log("result in rewrite:", result)
         return result;
     } catch (error) {

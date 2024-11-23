@@ -269,28 +269,26 @@ function isTextInput(element: HTMLElement): element is HTMLInputElement | HTMLTe
 /**
  * Gets the cursor position to place the popup container.
  */
-function getCursorPosition(target: HTMLElement): { x: number; y: number } {
+function getCursorPositionForContentEditable(selection: Selection): { x: number; y: number } {
     let x = 0;
     let y = 0;
 
-    const isSupported = typeof window.getSelection !== "undefined";
-    if (isSupported) {
-        const selection = window.getSelection();
-        if (selection && selection.rangeCount !== 0) {
-            // Clone the range to avoid modifying the current selection
-            const range = selection.getRangeAt(0).cloneRange();
+    // const selection = window.getSelection();
+    if (selection && selection.rangeCount !== 0) {
+        // Clone the range to avoid modifying the current selection
+        const range = selection.getRangeAt(0).cloneRange();
+        // const range = storedSelectionRange!.cloneRange();
 
-            // Collapse the range to the start or end based on the selection direction
-            const isBackward = isSelectionBackward(selection);
-            range.collapse(isBackward);
+        // Collapse the range to the start or end based on the selection direction
+        const isBackward = isSelectionBackward(selection);
+        range.collapse(isBackward);// collapse the range to the beginning or end of the current selection
 
-            // Get the client rect of the collapsed range (caret position)
-            const rects = range.getClientRects();
-            if (rects.length > 0) {
-                const rect = rects[0];
-                x = rect.left + window.scrollX;
-                y = rect.top + window.scrollY;
-            }
+        // Get the client rect of the collapsed range (caret position)
+        const rects = range.getClientRects();
+        if (rects.length > 0) {
+            const rect = rects[0];
+            x = rect.left + window.scrollX;
+            y = rect.top + window.scrollY;
         }
     }
 
@@ -301,14 +299,14 @@ function getCursorPosition(target: HTMLElement): { x: number; y: number } {
  * Determines if the current selection is backward.
  */
 function isSelectionBackward(selection: Selection): boolean {
-    if (selection.anchorNode && selection.focusNode) {
+    if (selection.anchorNode && selection.focusNode) { // if starting point and ending point of the selection exists
         const position = selection.anchorNode.compareDocumentPosition(selection.focusNode);
-        if (position === Node.DOCUMENT_POSITION_PRECEDING) {
+        if (position === Node.DOCUMENT_POSITION_PRECEDING) { // focusNode is earlier in the document
             return true;
-        } else if (position === Node.DOCUMENT_POSITION_FOLLOWING) {
+        } else if (position === Node.DOCUMENT_POSITION_FOLLOWING) { // anchorNode is earlier in the document
             return false;
-        } else {
-            return selection.anchorOffset > selection.focusOffset;
+        } else {// nodes are in the same position
+            return selection.anchorOffset > selection.focusOffset; // true if selection is backward
         }
     }
     return false;
@@ -375,12 +373,15 @@ function handleTextSelection(event: MouseEvent): void {
             showPopupContainer(x, y);
         }
     } else if (target.isContentEditable) {
-        const selection = window.getSelection();
-        if (selection && !selection.isCollapsed) {
+        const selection = window.getSelection(); // Get the current selection
+        if (selection && !selection.isCollapsed) { // Check if one or more characters are selected
             // Store selection for contentEditable element
+
+            // Get selection range and clone it to avoid modifying the current selection
+            // getRangeAt() doesn't support for shadow DOM
             storedSelectionRange = selection.getRangeAt(0).cloneRange();
 
-            const { x, y } = getCursorPosition(target);
+            const { x, y } = getCursorPositionForContentEditable(selection);
             showPopupContainer(x, y);
         }
     }
