@@ -12,17 +12,17 @@
     'Helvetica Neue',
     sans-serif;
 
-  color-scheme: light dark;
-  background-color: #242424;
+  /* color-scheme: light dark; */
+  /* background-color: #242424; */
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   :root {
     background-color: #fafafa;
   }
-}
+} */
 
-body {
+/* body {
   min-width: 20rem;
   margin: 0;
-}
+} */

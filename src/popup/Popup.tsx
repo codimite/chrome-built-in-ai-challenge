@@ -1,39 +1,88 @@
 import { useState, useEffect } from 'react'
-
-import './Popup.css'
+import { IconSun, IconMoonStars } from '@tabler/icons-react'
+import {
+  useComputedColorScheme,
+  useMantineColorScheme,
+  useMantineTheme,
+  Switch,
+  rem,
+  Text,
+  Group,
+  Card,
+} from '@mantine/core'
+import classes from './Popup.module.css'
 
 export const Popup = () => {
-  const [darkMode, setDarkMode] = useState(false);
-//   const TODO: need to implement logic -> dictionary to disable for specific websites
+  const { colorScheme, setColorScheme } = useMantineColorScheme()
+  const computedColorScheme = useComputedColorScheme('light')
 
-  const toggleDarkMode = () => {
-    console.log('toggleDarkMode popup clicked');
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    chrome.storage.sync.set({ darkMode: newDarkMode });
-    // chrome.runtime.sendMessage({ type: 'DARK_MODE_TOGGLE', darkMode: newDarkMode });//TODO: add better name for DARK_MODE_TOGGLE
-  };
+  const toggleColorScheme = () => {
+    console.log('dark mode fired')
+    setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark')
+  }
 
-  useEffect(() => {
-    chrome.storage.sync.get(['darkMode'], (result) => {//TODO: add better name for darkMode
-      setDarkMode(result.darkMode || false);
-    });
-  }, []);
+  const toggleForWebsite = () => {
+    console.log('website toggle clicked')
+  }
+
+  const optionsForUser = [
+    {
+      title: 'Dark Mode',
+      description: 'Enjoy a sleek and comfotable experience',
+      action: toggleColorScheme,
+    },
+    { title: 'This Website  ', description: 'https://google.com', action: toggleForWebsite },
+  ]
+
+  const items = optionsForUser.map((item) => (
+    <div className={classes.itemWrapper} key={item.title}>
+      <Group justify="space-between" className={classes.item} wrap="nowrap" gap="xl">
+        <div>
+          <Text fw="500">{item.title}</Text>
+          <Text size="xs" c="dimmed">
+            {item.description}
+          </Text>
+        </div>
+        <Switch
+          onLabel="ON"
+          offLabel="OFF"
+          className={classes.switch}
+          size="sm"
+          color="grape"
+          onClick={item.action}
+        />
+      </Group>
+    </div>
+  ))
+
+  //   const [darkMode, setDarkMode] = useState(false);
+  //   const TODO: need to implement logic -> dictionary to disable for specific websites
+
+  //   const toggleDarkMode = () => {
+  //     console.log('toggleDarkMode popup clicked');
+  //     const newDarkMode = !darkMode;
+  //     setDarkMode(newDarkMode);
+  //     chrome.storage.sync.set({ darkMode: newDarkMode });
+  //     // chrome.runtime.sendMessage({ type: 'DARK_MODE_TOGGLE', darkMode: newDarkMode });//TODO: add better name for DARK_MODE_TOGGLE
+  //   };
+
+  //   useEffect(() => {
+  //     chrome.storage.sync.get(['darkMode'], (result) => {//TODO: add better name for darkMode
+  //       setDarkMode(result.darkMode || false);
+  //     });
+  //   }, []);
 
   return (
-    <main className={darkMode ? 'dark' : ''}>
-      <h3>Popup Page</h3>
-      <label>
-        <input type="checkbox" checked={darkMode} onChange={toggleDarkMode} />
-        Enabled for this Website
-      </label>
-      <br/>
-      <label>
-        <input type="checkbox" checked={darkMode} onChange={toggleDarkMode} />
-        Dark Mode
-      </label>
-    </main>
-  );
-};
+    <Card withBorder radius="md" p="xl" className={classes.card}>
+      <Text fz="lg" className={classes.title} fw={500}>
+        Intellawrite
+      </Text>
+      <Text fz="xs" c="dimmed" mt={3} mb="xl">
+        Testing desc
+      </Text>
+      {items}
+    </Card>
+  )
+}
 
-export default Popup;
+export default Popup
