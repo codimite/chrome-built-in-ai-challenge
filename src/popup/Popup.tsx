@@ -13,8 +13,24 @@ import {
 import classes from './Popup.module.css'
 
 export const Popup = () => {
+  const [currentDomain, setCurrentDomain] = useState('')
+
   const { colorScheme, setColorScheme } = useMantineColorScheme()
   const computedColorScheme = useComputedColorScheme('light')
+
+  useEffect(() => {
+    //get the current active tab's domain
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length > 0 && tabs[0].url) {
+        try {
+          const url = new URL(tabs[0].url)
+          setCurrentDomain(url.origin)
+        } catch (error) {
+          console.log('invalid url for current tab: ', tabs[0].url)
+        }
+      }
+    })
+  }, [])
 
   const toggleColorScheme = () => {
     console.log('dark mode fired')
@@ -31,7 +47,11 @@ export const Popup = () => {
       description: 'Enjoy a sleek and comfotable experience',
       action: toggleColorScheme,
     },
-    { title: 'This Website  ', description: 'https://google.com', action: toggleForWebsite },
+    {
+      title: 'This Website  ',
+      description: currentDomain || 'This Website',
+      action: toggleForWebsite,
+    },
   ]
 
   const items = optionsForUser.map((item) => (
