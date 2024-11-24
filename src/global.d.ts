@@ -1,27 +1,43 @@
 /// <reference types="vite/client" />
 
-declare const __APP_VERSION__: string
+declare const __APP_VERSION__: string;
 
 export {};
 
 declare global {
-    type AIModelAvailability = 'readily' |  'after-download' | 'no';
+  type AIModelAvailability = 'readily' | 'after-download' | 'no';
 
-    interface LanguageModel {
-        capabilities: (options?: any) => Promise<{
-          available: AIModelAvailability;
-          defaultTemperature: number;
-          defaultTopK: number;
-          maxTopK: number;
-          // Add other properties as needed
-        }>;
-        create: (options? :any) => Promise<any>;
-        // Add other methods and properties if necessary
-    }
-    
-    interface AI {
-        languageModel: LanguageModel;
-    }
-    
-    declare const ai: AI;
+  interface LanguageModelCapabilities {
+    available: AIModelAvailability;
+    defaultTemperature: number;
+    defaultTopK: number;
+    maxTopK: number;
+  }
+
+  interface LanguageModel {
+    capabilities: (options?: any) => Promise<LanguageModelCapabilities>;
+    create: (options?: any) => Promise<any>;
+  }
+
+  interface RewriterOptions {
+    tone: 'as-is' | 'more-formal' | 'more-casual';
+    length: 'as-is' | 'shorter' | 'longer';
+    format: 'as-is' | 'plain-text' | 'markdown';
+    sharedContext: string;
+  }
+
+  interface Rewriter {
+    rewrite: (input: string) => Promise<string>;
+  }
+
+  interface RewriterModel {
+    create: (options: RewriterOptions) => Promise<Rewriter>;
+  }
+
+  interface AI {
+    languageModel: LanguageModel;
+    rewriter: RewriterModel;
+  }
+
+  const ai: AI;
 }

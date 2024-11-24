@@ -158,7 +158,8 @@ function showPopupContainer(x: number, y: number): void {
             const loadingAnimation = createLoadingAnimation();
             popupContainer.appendChild(loadingAnimation);
 
-            const prompt = `Please rewrite the following text: ${selectedText}`;
+            const prompt = `${selectedText}`;
+            console.log("sending prompt")
             chrome.runtime.sendMessage({ action: 'REWRITE', data: prompt }, (response) => {
                 const replacementText = response.result;
                 replaceStoredSelectedText(replacementText);

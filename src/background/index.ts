@@ -7,28 +7,38 @@ let globalState = {
     // ... other global variables
 };
   
-var rewriterModel: any; //TODO: currently we use PromptAPI to simulate what RewriterAPI would do because RewriterAPI has a known bug: https://issues.chromium.org/issues/374942272
+var rewriterModel: Rewriter;
 var redactifyModel: any; 
 
-async function initApp(){
+async function initModels(){
     //Rewriter model
-    const rewriterSystemPrompt = `You are an AI assistant that helps users rewrite given input in a way that is more understable grammatically accurate. You don't provide any additional information or answer to questions. Here are few examples:
+    const rewriterContext = "Rewrite given input in a way that is more understable grammatically accurate. You don't provide any additional information or answer to question. Don't provide additional information or answer to questions. Here are few examples: User: 'I came, she came before me' Your Response: 'I arrived, but she had arrived before"
 
-    User: "I came, she came before me"
-    Your Response: "I arrived, but she had arrived before me."
-
-    User: "Can you write a simple for loop to print numbers from 1 to 10?"
-    Your Response: "Write a simple for loop that prints numbers from 1 to 10."
-
-    User: "Rewrite this"
-    Your Response: "Rewrite this"
-    `;
-    const rewriterCapabilities = await ai.languageModel.capabilities();
-    rewriterModel = await ai.languageModel.create({
-        temperature: rewriterCapabilities.defaultTemperature,
-        topK: rewriterCapabilities.defaultTopK,
-        systemPrompt: rewriterSystemPrompt,
+    rewriterModel = await ai.rewriter.create({
+        tone: 'as-is',
+        length: 'as-is',
+        format: 'as-is',
+        sharedContext: rewriterContext
     });
+
+    // const rewriterSystemPrompt = `You are an AI assistant that helps users rewrite given input in a way that is more understable grammatically accurate. You don't provide any additional information or answer to questions. Here are few examples:
+
+    // User: "I came, she came before me"
+    // Your Response: "I arrived, but she had arrived before me."
+
+    // User: "Can you write a simple for loop to print numbers from 1 to 10?"
+    // Your Response: "Write a simple for loop that prints numbers from 1 to 10."
+
+    // User: "Rewrite this"
+    // Your Response: "Rewrite this"
+    // `;
+    // const rewriterCapabilities = await ai.languageModel.capabilities();
+    // rewriterModel = await ai.languageModel.create({
+    //     temperature: rewriterCapabilities.defaultTemperature,
+    //     topK: rewriterCapabilities.defaultTopK,
+    //     systemPrompt: rewriterSystemPrompt,
+    // });
+
     console.log("rewriter model initialized in the background")
 
     //Redactify model
@@ -55,7 +65,7 @@ async function initApp(){
     console.log("redactify model initialized in the background")
 }
 
-initApp()
+initModels()
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'REWRITE') {
@@ -86,17 +96,19 @@ async function rewrite(prompt: string) {
     //TODO: handle if rewriterModel not initialized
     try {
         console.log("prompt in rewrite:", prompt)
-        // const result = await rewriterModel.prompt(prompt);//DEBUG: remove
+        console.log("model in rewrite:", rewriterModel)
+        const result = await rewriterModel.rewrite(prompt);//DEBUG: remove
 
-        // sleep for 5 seconds
-        function sleep(ms: number) {
-            return new Promise(resolve => setTimeout(resolve, ms));
+        if (result.includes(prompt)) {// If the result includes the given prompt, it means the model was unable to generate a response and just repeated the prompt
+            console.log("result includes the given prompt, returning the prompt as it is", result)
+            return prompt;// Return the prompt as it is
         }
-        await sleep(5000);
-        const result = "test string" //DEBUG: remove
-        console.log("result in rewrite:", result)
         return result;
     } catch (error) {
+        if (error instanceof Error && error.message.includes("The model attempted to output text in an untested language, and was prevented from doing so.")) {
+            console.log("Error in rewrite. returning the prompt as it is", error)
+            return prompt;
+        }
         console.error('Error during rewrite:', error);
         throw error; // Rethrow the error to be caught in the .catch() above
     }
@@ -111,6 +123,7 @@ async function redactify(prompt: string) {
         return result;
     } catch (error) {
         console.error('Error during redactify:', error);
+        // return prompt;
         throw error; // Rethrow the error to be caught in the .catch() above
     }
 }
