@@ -181,7 +181,10 @@ function showPopupContainer(x: number, y: number): void {
 
             const prompt = `${selectedText}`;
             chrome.runtime.sendMessage({ action: 'REDACTIFY', data: prompt }, (response) => {
+                // console.log("response", response)
+                // const replacementText = response;
                 const replacementText = response.result;
+                console.log("replacement text", replacementText)
                 replaceStoredSelectedText(replacementText);
                 removePopupContainer(); // Remove popupContainer after response is handled
             });
