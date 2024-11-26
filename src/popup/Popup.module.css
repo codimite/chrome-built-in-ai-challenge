@@ -2,6 +2,20 @@
   background-color: var(--mantine-color-body);
 }
 
+.paper {
+  border: 4px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4)); /* Border around the item */
+  border-radius: var(--mantine-radius-md); /* Rounded corners */
+  margin-bottom: var(--mantine-spacing-sm); /* Spacing between items */
+  margin-left: var(--mantine-spacing-sm); /* Spacing between items */
+  margin-right: var(--mantine-spacing-sm); /* Spacing between items */
+  margin-top: var(--mantine-spacing-sm); /* Spacing between items */
+  background-color: var(--mantine-color-body); /* Optional: Background color for the item */
+  box-shadow: var(--mantine-shadow-sm); /* Optional: Subtle shadow effect */
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease; /* Optional: Smooth hover effect */
+}
+
 .itemWrapper {
   border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4)); /* Border around the item */
   border-radius: var(--mantine-radius-md); /* Rounded corners */
@@ -42,6 +56,6 @@
 }
 
 body {
-  min-width: 25rem;
+  min-width: 30rem;
   margin: 0;
 }
