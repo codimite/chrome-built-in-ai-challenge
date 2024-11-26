@@ -29,7 +29,7 @@ export default defineManifest({
     {
       matches: ['http://*/*', 'https://*/*'],
       js: ['src/contentScript/index.ts'],
-      css: ['src/contentScript/styles.css']
+      css: ['src/contentScript/styles.css'],
     },
   ],
   side_panel: {
@@ -37,12 +37,18 @@ export default defineManifest({
   },
   web_accessible_resources: [
     {
-      resources: ['img/logo-16.png', 'img/logo-34.png', 'img/logo-48.png', 'img/logo-128.png','src/contentScript/styles.css'],
+      resources: [
+        'img/logo-16.png',
+        'img/logo-34.png',
+        'img/logo-48.png',
+        'img/logo-128.png',
+        'src/contentScript/styles.css',
+      ],
       matches: [],
     },
   ],
   // permissions: ['sidePanel', 'storage'],// needed for demo side panel
-  permissions: ['activeTab', 'scripting','storage'],
+  permissions: ['activeTab', 'scripting', 'storage', 'tabs'],
   chrome_url_overrides: {
     newtab: 'newtab.html',
   },
