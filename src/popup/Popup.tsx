@@ -143,25 +143,6 @@ export const Popup = () => {
                 </Text>
               </div>
             </div>
-            {colorScheme === 'light' ? (
-              <ThemeIcon
-                variant="gradient"
-                size="lg"
-                aria-label="Gradient action icon"
-                gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
-              >
-                <BsMoonStars size={20} />
-              </ThemeIcon>
-            ) : (
-              <ThemeIcon
-                variant="gradient"
-                size="lg"
-                aria-label="Gradient action icon"
-                gradient={{ from: 'grey', to: 'black', deg: 90 }}
-              >
-                <BsFillMoonStarsFill size={20} />
-              </ThemeIcon>
-            )}
 
             <Switch
               onLabel="ON"
