@@ -9,40 +9,43 @@ interface ActionsToolbarProps {
   onSummarize: () => void
   onRewrite: () => void
   onClose: () => void
+  onRedact: () => void
 }
 export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
   onSummarize,
   onRewrite,
+  onRedact,
   onClose,
 }) => {
   const [loading, setLoading] = useState(false)
 
+  // handle onClicks for rewriter
   const handleRewriterClick = async () => {
     setLoading(true)
     await onRewrite()
-    // setLoading(false)
-    // onClose()
+
     setTimeout(() => {
-      setLoading(false) // Stop loading animation
-      onClose() // Close the toolbar
-    }, 3000)
+      setLoading(false)
+      onClose()
+    }, 2000)
+  }
+
+  // handle onClicks for redact
+  const handleReadctClick = async () => {
+    setLoading(true)
+    await onRedact()
+
+    setTimeout(() => {
+      setLoading(false)
+      onClose()
+    }, 2000)
   }
 
   return (
     <>
       <Card shadow="sm" radius="md" withBorder p="xs">
         {loading ? (
-          //   <Loader color="blue" size="sm" type="bars" />
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '50px',
-            }}
-          >
-            <Loader color="grape" size="md" type="bars" />
-          </div>
+          <Loader color="grape" size="xs" type="bars" />
         ) : (
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'nowrap', alignItems: 'center' }}>
             <Text
@@ -61,6 +64,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
               fw={500}
               component="span"
               style={{ color: 'black', cursor: 'pointer', margin: 0 }}
+              onClick={handleReadctClick}
             >
               <IoMdSync size={16} style={{ marginRight: '4px' }} />
               Redact

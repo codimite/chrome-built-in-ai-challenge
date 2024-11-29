@@ -73,18 +73,21 @@ function renderActionsToolbar(x: number, y: number) {
       <ActionsToolbar
         onSummarize={handleSummarize}
         onRewrite={handleRewrite}
+        onRedact={handleRedact}
         onClose={removeToolbar}
       />
     </MantineProvider>,
   )
+
+  // to detect clicks ouside the toolbar
+  document.addEventListener('mousedown', handleToolbarOutsideClick)
 }
-//handle summarizer onClick event
+// handle summarizer onClick event
 function handleSummarize() {
   console.log('summarizer clicked!')
 }
 
-//handle rewriter onClick event
-
+// handle rewriter onClick event
 function handleRewrite() {
   console.log('rewriter clicked!')
 
@@ -99,19 +102,49 @@ function handleRewrite() {
       console.log(`received ${replacementText} as the reply text`)
 
       replaceStoredSelectedText(replacementText)
-
-      removeToolbar()
     })
   } else {
     removeToolbar()
   }
 }
 
-//to remove toolbar from the view
+// handle redact onClick event
+function handleRedact() {
+  console.log('redact clicked!')
+
+  const selectedText = getSelectedText()
+
+  if (selectedText !== '') {
+    const prompt = `${selectedText}`
+    console.log(`sending ${prompt} as the selected text for Redact`)
+
+    chrome.runtime.sendMessage({ action: 'REDACTIFY', data: prompt }, (response) => {
+      const replacementText = response.result
+      console.log(`received ${replacementText} as the reply text`)
+
+      replaceStoredSelectedText(replacementText)
+    })
+  } else {
+    removeToolbar()
+  }
+}
+
+// to remove toolbar from the view
 const removeToolbar = () => {
   const toolbarContainer = document.getElementById('toolbar-container')
   if (toolbarContainer) {
     toolbarContainer.remove()
+  }
+}
+
+// handle outside click for actionsToolbar
+const handleToolbarOutsideClick = (event: MouseEvent) => {
+  const toolbarContainer = document.getElementById('toolbar-container')
+  if (toolbarContainer && !toolbarContainer.contains(event.target as Node)) {
+    removeToolbar()
+
+    // unmount the event listener after removing
+    document.removeEventListener('mousedown', handleToolbarOutsideClick)
   }
 }
 
