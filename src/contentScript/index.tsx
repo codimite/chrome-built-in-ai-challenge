@@ -126,46 +126,72 @@ function handleSummarize() {
 }
 
 // handle rewriter onClick event
-function handleRewrite() {
-  console.log('rewriter clicked!')
-
-  const selectedText = getSelectedText()
-
-  if (selectedText !== '') {
-    const prompt = `${selectedText}`
-    console.log(`sending ${prompt} as the selected text for Rewrite`)
-
-    chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.REWRITE, data: prompt }, (response) => {
-      const replacementText = response.result
-      console.log(`received ${replacementText} as the reply text`)
-
-      replaceStoredSelectedText(replacementText)
-    })
-  } else {
-    removeToolbar()
-  }
+async function handleRewrite() {
+    console.log('rewriter clicked!');
+  
+    const selectedText = getSelectedText();
+  
+    if (selectedText !== '') {
+      const prompt = `${selectedText}`;
+      console.log(`sending ${prompt} as the selected text for Rewrite`);
+  
+      // Return a promise to ensure completion
+      return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage(
+          { action: MESSAGE_ACTIONS.REWRITE, data: prompt },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              console.error('Error sending message:', chrome.runtime.lastError);
+              reject(chrome.runtime.lastError);
+            } else {
+              const replacementText = response.result;
+              console.log(`received ${replacementText} as the reply text`);
+  
+              replaceStoredSelectedText(replacementText);
+              resolve(response);
+            }
+          }
+        );
+      });
+    } else {
+      removeToolbar();
+      return Promise.resolve(); // Resolve immediately if there's no selected text
+    }
 }
 
 // handle redact onClick event
-function handleRedact() {
-  console.log('redact clicked!')
-
-  const selectedText = getSelectedText()
-
-  if (selectedText !== '') {
-    const prompt = `${selectedText}`
-    console.log(`sending ${prompt} as the selected text for Redact`)
-
-    chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.REDACTIFY, data: prompt }, (response) => {
-      const replacementText = response.result
-      console.log(`received ${replacementText} as the reply text`)
-
-      replaceStoredSelectedText(replacementText)
-    })
-  } else {
-    removeToolbar()
+async function handleRedact() {
+    console.log('redact clicked!');
+  
+    const selectedText = getSelectedText();
+  
+    if (selectedText !== '') {
+      const prompt = `${selectedText}`;
+      console.log(`sending ${prompt} as the selected text for Redact`);
+  
+      // Return a promise to ensure completion
+      return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage(
+          { action: MESSAGE_ACTIONS.REDACTIFY, data: prompt },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              console.error('Error sending message:', chrome.runtime.lastError);
+              reject(chrome.runtime.lastError);
+            } else {
+              const replacementText = response.result;
+              console.log(`received ${replacementText} as the reply text`);
+  
+              replaceStoredSelectedText(replacementText);
+              resolve(response);
+            }
+          }
+        );
+      });
+    } else {
+      removeToolbar();
+      return Promise.resolve(); // Resolve immediately if there's no selected text
+    }
   }
-}
 
 // to remove toolbar from the view
 const removeToolbar = () => {
