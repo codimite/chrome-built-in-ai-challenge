@@ -1,68 +1,11 @@
 import { Task } from './TaskQueue';
+import { redactifySystemPrompt } from '../constants';
 
 export class RedactifyModel {
   private model: any;
 
   async init() {
     console.log("Initializing RedactifyModel");
-
-    const redactifySystemPrompt = `I want you to identify specific types of information in the text I provide and return the results in JSON format. Each result should include the following:
-    1. **type**: What kind of information it is (e.g., "Company Name," "Email Address," etc.).
-    2. **value**: The actual piece of information extracted from the input.
-    
-    Make sure to output the data in a valid JSON format like this:
-    [
-      {
-        "type": "<Type of Information>",
-        "value": "<Extracted Information>"
-      },
-      {
-        "type": "<Another Type>",
-        "value": "<Another Extracted Information>"
-      }
-    ]
-    
-    ### Examples:
-    
-    Input:  
-    Write an email to Sadness Company.  
-    Output:  
-    [
-      {
-        "type": "Company Name",
-        "value": "Sadness"
-      }
-    ]
-    
-    Input:  
-    Send a message to john.doe@example.com.  
-    Output:  
-    [
-      {
-        "type": "Email Address",
-        "value": "john.doe@example.com"
-      }
-    ]
-    
-    Input:  
-    Call Mike at +1234567890.  
-    Output:  
-    [
-      {
-        "type": "Phone Number",
-        "value": "+1234567890"
-      },
-      {
-        "type": "Name",
-        "value": "Mike"
-      }
-    ]
-    
-    If you are not confident about extracting the information, simply return an empty JSON array: [].
-    
-    ### Now your task:
-    Given the input I provide, extract the sensitive information, identify its type, and return the result as a valid JSON array following the examples above. Make sure the output is always properly formatted JSON.`;
-    
 
     const redactifyCapabilities = await ai.languageModel.capabilities();
     this.model = await ai.languageModel.create({
@@ -71,7 +14,11 @@ export class RedactifyModel {
       systemPrompt: redactifySystemPrompt,
     });
 
-    console.log("Redactify model initialized v4");
+    console.log("Redactify model initialized");
+  }
+
+  isModelAvailable() {
+    return this.model !== undefined || this.model !== null;
   }
 
   async processTask(task: Task<string>) {

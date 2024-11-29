@@ -4,6 +4,7 @@ import ActionsToolbar from './components/ActionsToolbar'
 import { MantineProvider } from '@mantine/core'
 // import '@mantine/core/styles.css'
 // import './styles.css'
+import { MESSAGE_ACTIONS } from '../constants'
 
 console.info('contentScript is running edited')
 
@@ -119,7 +120,7 @@ function handleRewrite() {
     const prompt = `${selectedText}`
     console.log(`sending ${prompt} as the selected text for Rewrite`)
 
-    chrome.runtime.sendMessage({ action: 'REWRITE', data: prompt }, (response) => {
+    chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.REWRITE, data: prompt }, (response) => {
       const replacementText = response.result
       console.log(`received ${replacementText} as the reply text`)
 
@@ -140,7 +141,7 @@ function handleRedact() {
     const prompt = `${selectedText}`
     console.log(`sending ${prompt} as the selected text for Redact`)
 
-    chrome.runtime.sendMessage({ action: 'REDACTIFY', data: prompt }, (response) => {
+    chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.REDACTIFY, data: prompt }, (response) => {
       const replacementText = response.result
       console.log(`received ${replacementText} as the reply text`)
 
