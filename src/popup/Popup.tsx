@@ -8,6 +8,7 @@ import { IconContext } from 'react-icons'
 import { IoMdOpen, IoIosClose } from 'react-icons/io'
 import { FaArrowRight } from 'react-icons/fa'
 import { LuMessagesSquare } from 'react-icons/lu'
+import intelliwriteLogo from '../assets/int-blue-34.png'
 import gif from '../assets/div-gif.gif'
 import {
   useComputedColorScheme,
@@ -163,21 +164,6 @@ export const Popup = () => {
             backgroundPosition: '20% 45%',
           }}
         >
-          {/* <Group className={classes.item} wrap="nowrap" gap="xs">
-            <IconContext.Provider value={{ color: 'purple' }}>
-              <RiPenNibFill size={25} />
-            </IconContext.Provider>
-            <div>
-              <Text size=" 18px" fw="500">
-                Intelliwrite
-              </Text>
-            </div>
-            <div style={{ paddingLeft: '50px' }}>
-              <IconContext.Provider value={{ color: 'purple' }}>
-                <IoIosClose size={20} />
-              </IconContext.Provider>
-            </div>
-          </Group> */}
           <Group
             className={classes.item}
             wrap="nowrap"
@@ -191,9 +177,11 @@ export const Popup = () => {
                 gap: '8px',
               }}
             >
-              <IconContext.Provider value={{ color: 'white' }}>
+              <Image src={intelliwriteLogo} height={30} />
+
+              {/* <IconContext.Provider value={{ color: 'white' }}>
                 <RiPenNibFill size={25} />
-              </IconContext.Provider>
+              </IconContext.Provider> */}
               <Text size="18px" fw="500" style={{ color: 'white' }}>
                 Intelliwrite
               </Text>
@@ -260,6 +248,50 @@ export const Popup = () => {
                 />
               </Group>
             </div>
+            <Group justify="space-between" mt="md">
+              <Text size="xs" fw={600}>
+                About:
+              </Text>
+            </Group>
+            <Text size="xs" fw={400} mb={'xs'}>
+              IntelliWrite is an advanced AI-powered tool that helps you easily rewrite content
+              while protecting sensitive information.
+            </Text>
+            <Card.Section withBorder>
+              <Group style={{ justifyContent: 'flex-end' }} mt="xs" mb="xs">
+                <Text
+                  size="xs"
+                  fw={600}
+                  style={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '2px',
+                  }}
+                  onClick={goToEnableDocs}
+                >
+                  <TbStars size={14} style={{ paddingTop: '1px' }} />
+                  Rate Us
+                </Text>
+                <Text
+                  size="xs"
+                  fw={600}
+                  style={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '2px',
+                    paddingRight: '20px',
+                  }}
+                  onClick={goToEnableDocs}
+                >
+                  <LuMessagesSquare size={14} style={{ paddingTop: '1px' }} />
+                  Feedback
+                </Text>
+              </Group>
+            </Card.Section>
           </>
         ) : (
           <>
@@ -322,17 +354,17 @@ export const Popup = () => {
                 </div>
               </Group>
             </div>
+
+            <Card.Section withBorder>
+              <Group style={{ justifyContent: 'flex-start' }} mt="xs" mb="xs" ml="lg">
+                <Text size="xs" fw={600} style={{ cursor: 'pointer' }} onClick={goToEnableDocs}>
+                  Learn How To Enable
+                  <FaArrowRight size={14} style={{ paddingLeft: '2px', paddingTop: '5px' }} />
+                </Text>
+              </Group>
+            </Card.Section>
           </>
         )}
-
-        <Card.Section withBorder>
-          <Group style={{ justifyContent: 'flex-start' }} mt="xs" mb="xs" ml="lg">
-            <Text size="xs" fw={600} style={{ cursor: 'pointer' }} onClick={goToEnableDocs}>
-              Learn How To Enable
-              <FaArrowRight size={14} style={{ paddingLeft: '2px', paddingTop: '5px' }} />
-            </Text>
-          </Group>
-        </Card.Section>
       </Card>
     </>
   )

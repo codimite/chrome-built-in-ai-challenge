@@ -2,7 +2,8 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import ActionsToolbar from './components/ActionsToolbar'
 import { MantineProvider } from '@mantine/core'
-import '@mantine/core/styles.css'
+// import '@mantine/core/styles.css'
+// import './styles.css'
 import { MESSAGE_ACTIONS } from '../constants'
 
 console.info('contentScript is running edited')
@@ -14,17 +15,17 @@ let storedInputElement: HTMLInputElement | HTMLTextAreaElement | null = null
 
 let darkMode: boolean = false
 
-chrome.storage.sync.get(['darkMode'], (result) => {
-  //TODO: add better name for darkMode
-  console.log('dark mode storage sync')
-  darkMode = result.darkMode
-  // // Use darkMode to conditionally render your HTML button
-  // if (darkMode) {//get css class and set dark mode style
-  //   // Render button with dark mode styling
-  // } else {
-  //   // Render button with light mode styling
-  // }
-})
+// chrome.storage.sync.get(['darkMode'], (result) => {
+//   //TODO: add better name for darkMode
+//   console.log('dark mode storage sync')
+//   darkMode = result.darkMode
+//   // // Use darkMode to conditionally render your HTML button
+//   // if (darkMode) {//get css class and set dark mode style
+//   //   // Render button with dark mode styling
+//   // } else {
+//   //   // Render button with light mode styling
+//   // }
+// })
 // function updateButtonAppearance(darkMode) {
 //     const button = document.getElementById('my-button');
 //     if (darkMode) {
@@ -46,13 +47,14 @@ chrome.storage.sync.get(['darkMode'], (result) => {
 /**
  * Listen for changes to the darkMode setting and update the button appearance accordingly.
  */
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === 'sync' && changes.darkMode) {
-    darkMode = changes.darkMode.newValue
-    //   updateButtonAppearance(darkMode);
-    console.log('dark mode status updated', darkMode)
-  }
-})
+// chrome.storage.onChanged.addListener((changes, area) => {
+//   if (area === 'sync' && changes.darkMode) {
+//     darkMode = changes.darkMode.newValue
+//     //   updateButtonAppearance(darkMode);
+//     console.log('dark mode status updated', darkMode)
+//   }
+// })
+const getRootElement = () => (typeof window === 'undefined' ? undefined : document.body)
 
 //rendering actions toolbar
 function renderActionsToolbar(x: number, y: number) {
@@ -68,9 +70,28 @@ function renderActionsToolbar(x: number, y: number) {
   toolbarContainer.style.top = `${y}px`
   toolbarContainer.style.zIndex = '1000'
 
-  const root = createRoot(toolbarContainer)
+  //   const root = createRoot(toolbarContainer)
+  const shadowRoot = toolbarContainer.attachShadow({ mode: 'open' })
+  //   const root = createRoot(shadowRoot)
+
+  // Create a container for mantine content in shadow dom
+  const shadowContent = document.createElement('div')
+  shadowRoot.appendChild(shadowContent)
+
+  const root = createRoot(shadowContent)
+
   root.render(
-    <MantineProvider>
+    // <MantineProvider
+    //   getRootElement={getRootElement}
+
+    // >
+    <MantineProvider
+      cssVariablesSelector=":host"
+      withCssVariables={true}
+      getRootElement={() => toolbarContainer}
+      withStaticClasses={false}
+      withGlobalClasses={false}
+    >
       <ActionsToolbar
         onSummarize={handleSummarize}
         onRewrite={handleRewrite}
@@ -83,6 +104,7 @@ function renderActionsToolbar(x: number, y: number) {
   // to detect clicks ouside the toolbar
   document.addEventListener('mousedown', handleToolbarOutsideClick)
 }
+
 // handle summarizer onClick event
 function handleSummarize() {
   console.log('summarizer clicked!')
