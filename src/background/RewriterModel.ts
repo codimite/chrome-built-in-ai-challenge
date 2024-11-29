@@ -1,17 +1,11 @@
 import { Task } from './TaskQueue';
+import { rewriterContext } from '../constants';
 
 export class RewriterModel {
   private model: any;
 
   async init() {
-    console.log("Initializing RewriterModel v2");
-
-    const rewriterContext = `Rewrite given input in a way that is more understable grammatically accurate. You don't provide any additional information or answer to question. Don't provide additional information or answer to questions. Only give single response. Here are few examples: 
-    
-    User: 'I came, she came before me' 
-    Your Response: 'I arrived, but she had arrived before'
-    `
-    ;
+    console.log("Initializing RewriterModel");
 
     this.model = await ai.rewriter.create({
       tone: 'as-is',
@@ -20,6 +14,10 @@ export class RewriterModel {
       sharedContext: rewriterContext,
     });
     console.log("Rewriter model initialized");
+  }
+
+  isModelAvailable() {
+    return this.model !== undefined || this.model !== null;
   }
 
   async processTask(task: Task<string>) {

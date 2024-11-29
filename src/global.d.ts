@@ -34,9 +34,18 @@ declare global {
     create: (options: RewriterOptions) => Promise<Rewriter>;
   }
 
+  interface Summarizer {
+    summarize: (input: string) => Promise<string>;
+  }
+
+  interface SummarizerModel {
+    create: () => Promise<Summarizer>;
+  }
+
   interface AI {
     languageModel: LanguageModel;
     rewriter: RewriterModel;
+    summarizer: SummarizerModel;
   }
 
   const ai: AI;
