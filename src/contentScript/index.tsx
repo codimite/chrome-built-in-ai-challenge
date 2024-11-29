@@ -108,6 +108,21 @@ function renderActionsToolbar(x: number, y: number) {
 // handle summarizer onClick event
 function handleSummarize() {
   console.log('summarizer clicked!')
+  const selectedText = getSelectedText()
+
+  if (selectedText !== '') {
+    const prompt = `${selectedText}`
+    console.log(`sending ${prompt} as the selected text for Summarizer`)
+
+    chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.SUMMARIZE, data: prompt }, (response) => {
+      const replacementText = response.result
+      console.log(`received ${replacementText} as the reply text`)
+
+      replaceStoredSelectedText(replacementText)
+    })
+  } else {
+    removeToolbar()
+  }
 }
 
 // handle rewriter onClick event
