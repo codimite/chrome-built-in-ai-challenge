@@ -159,16 +159,28 @@ function handleSummarize(x: number, y: number) {
     const prompt = `${selectedText}`
     console.log(`sending ${prompt} as the selected text for Summarizer`)
 
-    chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.SUMMARIZE, data: prompt }, (response) => {
-      const summarizedText = response.result
-      console.log(`received ${summarizedText} as the reply text`)
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        { action: MESSAGE_ACTIONS.SUMMARIZE, data: prompt },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.error('Error sending message:', chrome.runtime.lastError)
+            reject(chrome.runtime.lastError)
+          } else {
+            let summarizedText = response.result
+            console.log(`received ${summarizedText} as the reply text`)
 
-      //   replaceStoredSelectedText(summarizedText)
+            summarizedText = summarizedText.replace(/\*/g, '')
 
-      renderSummarizerBlock(x, y + 35, summarizedText)
+            renderSummarizerBlock(x, y + 35, summarizedText)
+            resolve(response)
+          }
+        },
+      )
     })
   } else {
     removeToolbar()
+    return Promise.resolve()
   }
 }
 

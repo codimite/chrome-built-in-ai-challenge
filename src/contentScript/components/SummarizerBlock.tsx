@@ -6,6 +6,18 @@ interface SummarizerBlockProps {
 }
 
 export const SummarizerBlock: React.FC<SummarizerBlockProps> = ({ onClose, summarizedText }) => {
+  const [colorscheme, setColorScheme] = useState()
+
+  const logoURL = chrome.runtime.getURL('img/int-blue-34.png')
+
+  useEffect(() => {
+    chrome.storage.sync.get(['colorScheme']).then((res) => {
+      if (res.colorScheme) {
+        setColorScheme(res.colorScheme)
+        console.log(`colorscheme set to ${res.colorScheme} when mounting`)
+      }
+    })
+  }, [])
   return (
     <div
       style={{
@@ -15,7 +27,7 @@ export const SummarizerBlock: React.FC<SummarizerBlockProps> = ({ onClose, summa
         padding: '12px',
         border: '1px solid #ddd',
         borderRadius: '8px',
-        backgroundColor: '#f9f9f9',
+        backgroundColor: colorscheme === 'dark' ? '#333' : '#f9f9f9',
         zIndex: 1000,
         position: 'relative',
         opacity: 1,
@@ -24,10 +36,68 @@ export const SummarizerBlock: React.FC<SummarizerBlockProps> = ({ onClose, summa
         maxWidth: '20rem',
       }}
     >
-      <h3 style={{ color: '#000', fontSize: '14px' }}>Summarizer Block</h3>{' '}
-      <p style={{ color: '#333', fontSize: '10px' }}>
-        {summarizedText ? summarizedText : 'Loading summary...'}
-      </p>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <img
+          src={logoURL}
+          alt="Logo"
+          style={{
+            opacity: 1,
+            marginRight: '1px',
+            width: '24px',
+            height: '24px',
+          }}
+        />
+        <div
+          style={{
+            display: 'flex',
+            marginLeft: '2px',
+            alignItems: 'center',
+            width: '100%',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span
+            style={{
+              color: colorscheme === 'light' ? '#000' : '#fff',
+              fontSize: '14px',
+              fontWeight: 'bold',
+            }}
+          >
+            IntelliWrite
+          </span>
+          <span
+            style={{
+              color: '#3498db',
+              fontSize: '12px',
+              cursor: 'pointer',
+              paddingRight: '8px',
+            }}
+            onClick={() => {
+              navigator.clipboard.writeText(summarizedText || '')
+              alert('Copied From Intelliwrite!')
+            }}
+          >
+            Copy
+          </span>
+        </div>
+      </div>
+      <div
+        style={{
+          backgroundColor: '#f0f0f0',
+          borderRadius: '8px',
+          padding: '8px',
+          display: 'inline-block',
+        }}
+      >
+        <p style={{ color: '#333', fontSize: '14px' }}>
+          {summarizedText ? summarizedText : 'Loading summary...'}
+        </p>
+      </div>
     </div>
   )
 }

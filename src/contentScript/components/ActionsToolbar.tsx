@@ -20,6 +20,8 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
 }) => {
   const [loading, setLoading] = useState(false)
 
+  const intelliwriteLogo = chrome.runtime.getURL('img/int-blue-34.png')
+
   // handle onClicks for rewriter
   const handleRewriterClick = async () => {
     try {
@@ -140,20 +142,21 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
               <div
                 style={{ display: 'flex', gap: '16px', flexWrap: 'nowrap', alignItems: 'center' }}
               >
-                {/* <img
-                src={`chrome-extension://${chrome.runtime.id}/assets/logo.png`}
-                alt="Placeholder Logo"
-                height="20"
-                style={{ marginRight: '8px' }}
-              /> */}
+                <img
+                  src={intelliwriteLogo}
+                  alt="Placeholder Logo"
+                  height={25}
+                  width={25}
+                  style={{ marginRight: '2px' }}
+                />
                 <Text
                   size="sm"
                   fw={500}
                   component="span"
-                  style={{ color: 'black', cursor: 'pointer', margin: 0 }}
+                  style={{ color: 'black', cursor: 'pointer', margin: 0, fontSize: 14 }}
                   onClick={handleRewriterClick}
                 >
-                  <BsPen size={12} style={{ marginRight: '4px' }} />
+                  <BsPen size={10} style={{ marginRight: '4px' }} />
                   Rewrite
                 </Text>
 
@@ -161,10 +164,10 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                   size="sm"
                   fw={500}
                   component="span"
-                  style={{ color: 'black', cursor: 'pointer', margin: 0 }}
+                  style={{ color: 'black', cursor: 'pointer', margin: 0, fontSize: 14 }}
                   onClick={handleReadctClick}
                 >
-                  <IoMdSync size={16} style={{ marginRight: '4px' }} />
+                  <IoMdSync size={15} style={{ marginRight: '4px' }} />
                   Redact
                 </Text>
 
@@ -172,10 +175,10 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                   size="sm"
                   fw={500}
                   component="span"
-                  style={{ color: 'black', cursor: 'pointer', margin: 0 }}
+                  style={{ color: 'black', cursor: 'pointer', margin: 0, fontSize: 14 }}
                   onClick={handleSummarizerClick}
                 >
-                  <MdOutlineSegment size={16} style={{ marginRight: '4px' }} />
+                  <MdOutlineSegment size={14} style={{ marginRight: '4px' }} />
                   Summarize
                 </Text>
               </div>
