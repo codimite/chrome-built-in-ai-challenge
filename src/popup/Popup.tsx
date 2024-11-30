@@ -9,6 +9,7 @@ import { IoMdOpen, IoIosClose } from 'react-icons/io'
 import { FaArrowRight } from 'react-icons/fa'
 import { LuMessagesSquare } from 'react-icons/lu'
 import intelliwriteLogo from '../assets/int-blue-34.png'
+import { MESSAGE_ACTIONS } from '../constants'
 import gif from '../assets/div-gif.gif'
 import {
   useComputedColorScheme,
@@ -30,6 +31,9 @@ export const Popup = () => {
   const [currentDomain, setCurrentDomain] = useState('')
   const [isVisible, setIsVisible] = useState(true)
   const [nanoStatus, setNanoStatus] = useState<boolean | string>(false)
+  const [promptApiStatus, setPromptApiStatus] = useState<boolean | string>(false)
+  const [rewriterApiStatus, setRewriterApiStatus] = useState<boolean | string>(false)
+  const [summarizerApiStatus, setSummarizerApiStatus] = useState<boolean | string>(false)
   const { colorScheme, setColorScheme } = useMantineColorScheme()
   const computedColorScheme = useComputedColorScheme('light')
 
@@ -61,12 +65,20 @@ export const Popup = () => {
 
   // get the status of chrome flags
   useEffect(() => {
-    const fetchGeminiStatus = async () => {
-      const status = await checkGeminiStatus()
-      setNanoStatus(status)
+    const fetchApiStatus = async () => {
+    //   const status = await checkGeminiStatus()
+    //   setNanoStatus(status)
+        chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.IS_APIS_READY }, (response) => {
+            console.log('response from background script:', response)
+            setPromptApiStatus(response.prompt)
+            setRewriterApiStatus(response.rewriter)
+            setSummarizerApiStatus(response.summarizer)
+        })
+
+
     }
 
-    fetchGeminiStatus()
+    fetchApiStatus()
   }, [])
 
   // check gemini nano status
@@ -144,6 +156,8 @@ export const Popup = () => {
     </div>
   ))
 
+  const areAllApisReady = promptApiStatus === true && rewriterApiStatus === true && summarizerApiStatus === true;
+
   const handlePopupClose = () => {
     setIsVisible(false)
   }
@@ -194,7 +208,7 @@ export const Popup = () => {
           </Group>
         </div>
         {/* check for chrome flags */}
-        {nanoStatus === 'readily' ? (
+        { areAllApisReady ? (
           <>
             <div className={classes.itemWrapper}>
               <Group justify="space-between" className={classes.item} wrap="nowrap" gap="xl">
@@ -312,12 +326,12 @@ export const Popup = () => {
                   </IconContext.Provider>
                   <div>
                     <Text fw="500" size="xs">
-                      Prompt API for Gemini Nano
+                      Prompt API
                     </Text>
                   </div>
                 </div>
                 <div>
-                  {nanoStatus === 'readily' ? (
+                  {promptApiStatus ? (
                     <Text fw="500" size="xs">
                       Enabled
                     </Text>
@@ -329,6 +343,7 @@ export const Popup = () => {
                 </div>
               </Group>
             </div>
+
             <div className={classes.itemWrapper}>
               <Group justify="space-between" className={classes.item} wrap="nowrap" gap="xl">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -337,12 +352,38 @@ export const Popup = () => {
                   </IconContext.Provider>
                   <div>
                     <Text fw="500" size="xs">
-                      Optimization Guide On Device
+                      Rewriter API
                     </Text>
                   </div>
                 </div>
                 <div>
-                  {nanoStatus === 'readily' ? (
+                  {rewriterApiStatus ? (
+                    <Text fw="500" size="xs">
+                      Enabled
+                    </Text>
+                  ) : (
+                    <Text fw="500" size="xs" style={{ color: 'grey' }}>
+                      Disabled
+                    </Text>
+                  )}
+                </div>
+              </Group>
+            </div>
+
+            <div className={classes.itemWrapper}>
+              <Group justify="space-between" className={classes.item} wrap="nowrap" gap="xl">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                  <IconContext.Provider value={{ color: 'purple' }}>
+                    <GiSoapExperiment size={25} />
+                  </IconContext.Provider>
+                  <div>
+                    <Text fw="500" size="xs">
+                      Summarizer API
+                    </Text>
+                  </div>
+                </div>
+                <div>
+                  {summarizerApiStatus ? (
                     <Text fw="500" size="xs">
                       Enabled
                     </Text>

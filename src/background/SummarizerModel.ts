@@ -14,7 +14,7 @@ export class SummarizerModel {
 
   // Check if the model is available
   isModelAvailable() {
-    return this.model !== undefined || this.model !== null;
+    return this.model !== undefined && this.model !== null;
   }
 
   // Process a task using the summarizer model

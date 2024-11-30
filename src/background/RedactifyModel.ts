@@ -18,7 +18,7 @@ export class RedactifyModel {
   }
 
   isModelAvailable() {
-    return this.model !== undefined || this.model !== null;
+    return this.model !== undefined && this.model !== null;
   }
 
   async processTask(task: Task<string>) {
