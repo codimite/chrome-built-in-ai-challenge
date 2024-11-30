@@ -30,7 +30,7 @@ import classes from './Popup.module.css'
 export const Popup = () => {
   const [currentDomain, setCurrentDomain] = useState('')
   const [isVisible, setIsVisible] = useState(true)
-  const [nanoStatus, setNanoStatus] = useState<boolean | string>(false)
+  const [extensionStatus, setExtensionsStatus] = useState<boolean>(false)
   const [promptApiStatus, setPromptApiStatus] = useState<boolean | string>(false)
   const [rewriterApiStatus, setRewriterApiStatus] = useState<boolean | string>(false)
   const [summarizerApiStatus, setSummarizerApiStatus] = useState<boolean | string>(false)
@@ -41,15 +41,21 @@ export const Popup = () => {
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs.length > 0 && tabs[0].url) {
-        try {
-          const url = new URL(tabs[0].url)
-          setCurrentDomain(url.origin)
-        } catch (error) {
-          console.log('invalid url for current tab: ', tabs[0].url)
+        if (tabs.length > 0 && tabs[0].url) {
+          try {
+            const url = new URL(tabs[0].url);
+            const hostname = url.hostname;
+    
+            chrome.storage.sync.get(['disabledWebsites'], (result) => {
+              const disabledWebsites = result.disabledWebsites || [];
+              const isCurrentlyDisabled = disabledWebsites.includes(hostname);
+              setExtensionsStatus(!isCurrentlyDisabled); // Set setExtensionsStatus to represent the site's enabled/disabled state
+            });
+          } catch (error) {
+            console.error('Invalid URL for current tab: ', tabs[0].url);
+          }
         }
-      }
-    })
+      });
   }, [])
 
   // get the theme status
@@ -66,32 +72,16 @@ export const Popup = () => {
   // get the status of chrome flags
   useEffect(() => {
     const fetchApiStatus = async () => {
-    //   const status = await checkGeminiStatus()
-    //   setNanoStatus(status)
         chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.IS_APIS_READY }, (response) => {
             console.log('response from background script:', response)
             setPromptApiStatus(response.prompt)
             setRewriterApiStatus(response.rewriter)
             setSummarizerApiStatus(response.summarizer)
         })
-
-
     }
 
     fetchApiStatus()
   }, [])
-
-  // check gemini nano status
-  const checkGeminiStatus = async () => {
-    try {
-      const capabilities = await ai.languageModel.capabilities()
-      console.log('Gemini Nano Status:', capabilities.available ? 'readily' : false)
-      return capabilities.available
-    } catch (error) {
-      console.error('Error checking Gemini Nano status:', error)
-      return false
-    }
-  }
 
   //toggling options for user
   const toggleColorScheme = () => {
@@ -105,11 +95,40 @@ export const Popup = () => {
   }
 
   const toggleForWebsite = () => {
-    console.log('website toggle clicked')
-    chrome.storage.sync.get(['colorScheme']).then((res) => {
-      console.log(`value from storage is ${res.colorScheme}`)
-    })
-  }
+    console.log('website toggle clicked');
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length > 0 && tabs[0].url) {
+        try {
+          const url = new URL(tabs[0].url);
+          const hostname = url.hostname;
+  
+          // Get the current disabled list and toggle the current site's state
+          chrome.storage.sync.get(['disabledWebsites'], (result) => {
+            const disabledWebsites = result.disabledWebsites || [];
+            const isCurrentlyDisabled = disabledWebsites.includes(hostname);
+  
+            if (isCurrentlyDisabled) {
+              // Remove from disabled list
+              const updatedList = disabledWebsites.filter((site: string) => site !== hostname);
+              chrome.storage.sync.set({ disabledWebsites: updatedList }, () => {
+                console.log(`${hostname} enabled`);
+                setExtensionsStatus(true); // Update NanoStatus to reflect the current state
+              });
+            } else {
+              // Add to disabled list
+              disabledWebsites.push(hostname);
+              chrome.storage.sync.set({ disabledWebsites }, () => {
+                console.log(`${hostname} disabled`);
+                setExtensionsStatus(false); // Update NanoStatus to reflect the current state
+              });
+            }
+          });
+        } catch (error) {
+          console.error('Invalid URL for current tab: ', tabs[0].url);
+        }
+      }
+    });
+  };
 
   // go to optimization flag handler
   const goToOptimizationFlag = () => {
@@ -240,28 +259,30 @@ export const Popup = () => {
               </Group>
             </div>
             <div className={classes.itemWrapper}>
-              <Group justify="space-between" className={classes.item} wrap="nowrap" gap="xl">
+            <Group justify="space-between" className={classes.item} wrap="nowrap" gap="xl">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                  <IconContext.Provider value={{ color: 'purple' }}>
+                <IconContext.Provider value={{ color: 'purple' }}>
                     <BsGlobe size={20} />
-                  </IconContext.Provider>
-                  <div>
+                </IconContext.Provider>
+                <div>
                     <Text fw="500">This Website</Text>
                     <Text size="xs" c="dimmed">
-                      {currentDomain}
+                    {currentDomain}
                     </Text>
-                  </div>
+                </div>
                 </div>
                 <Switch
-                  onLabel="ON"
-                  offLabel="OFF"
-                  className={classes.switch}
-                  size="md"
-                  color="grape"
-                  onClick={toggleForWebsite}
+                onLabel="ON"
+                offLabel="OFF"
+                className={classes.switch}
+                size="md"
+                color="grape"
+                onClick={toggleForWebsite}
+                checked={extensionStatus} // Reflect current state
                 />
-              </Group>
+            </Group>
             </div>
+
             <Group justify="space-between" mt="md">
               <Text size="xs" fw={600}>
                 About:

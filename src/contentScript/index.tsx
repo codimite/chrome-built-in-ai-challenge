@@ -598,4 +598,33 @@ function positionPopup(container: HTMLElement, x: number, y: number): void {
 }
 
 // Add event listener for text selection
-document.addEventListener('mouseup', handleTextSelection)
+// document.addEventListener('mouseup', handleTextSelection)
+chrome.storage.sync.get(['disabledWebsites'], (result) => {
+    const currentHostname = window.location.hostname; // Get the hostname
+    const disabledWebsites = result.disabledWebsites || [];
+  
+    if (!disabledWebsites.includes(currentHostname)) {
+      // Website is not disabled; enable the functionality
+        console.log('running the IntelliWrite extension on this website');
+      document.addEventListener('mouseup', handleTextSelection);
+    }
+  });
+  
+  // Listen for changes in the disabled list
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'sync' && changes.disabledWebsites) {
+      const currentHostname = window.location.hostname;
+      const disabledWebsites = changes.disabledWebsites.newValue || [];
+  
+      if (disabledWebsites.includes(currentHostname)) {
+        // Disable functionality if the website is in the disabled list
+        console.log('disabling the IntelliWrite extension on this website');
+        document.removeEventListener('mouseup', handleTextSelection);
+      } else {
+        // Enable functionality if the website is removed from the disabled list
+        console.log('enabling the IntelliWrite extension on this website');
+        document.addEventListener('mouseup', handleTextSelection);
+      }
+    }
+  });
+  
