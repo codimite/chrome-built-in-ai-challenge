@@ -13,7 +13,7 @@ export class SummarizerModel {
         this.model = await ai.summarizer.create();
         console.log("Summarizer model initialized");
     } catch (error) {
-        console.error("Failed to initialize SummarizerModel:", error);
+        console.warn("Failed to initialize SummarizerModel:", error);
         this.model = null;
     }
   }

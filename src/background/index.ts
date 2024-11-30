@@ -55,7 +55,7 @@ if (request.action === MESSAGE_ACTIONS.REWRITE) {
   }
 
   if (request.action === MESSAGE_ACTIONS.RE_INIT) {
-    if (!rewriterModel.isModelAvailable() && !redactifyModel.isModelAvailable()) {
+    if (!rewriterModel.isModelAvailable() && !redactifyModel.isModelAvailable() && !summarizerModel.isModelAvailable()) {
       initModels();
     }
     sendResponse({

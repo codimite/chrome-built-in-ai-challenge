@@ -19,7 +19,7 @@ export class RewriterModel {
         });
     console.log("Rewriter model initialized");
     } catch (error) {
-        console.error("Failed to initialize RewriterModel:", error);
+        console.warn("Failed to initialize RewriterModel:", error);
         this.model = null
     }
   }

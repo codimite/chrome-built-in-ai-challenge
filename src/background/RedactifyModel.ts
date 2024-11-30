@@ -20,7 +20,7 @@ export class RedactifyModel {
 
       console.log("Redactify model initialized");
     } catch (error) {
-      console.error("Failed to initialize RedactifyModel:", error);
+      console.warn("Failed to initialize RedactifyModel:", error);
       this.model = null;
     }
   }

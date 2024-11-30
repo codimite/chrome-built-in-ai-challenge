@@ -6,6 +6,10 @@ export const MESSAGE_ACTIONS = {
     RE_INIT: 'RE_INIT',
 };
 
+export const REDACTIFY_ENABLED_SITES = [
+    "chatgpt.com"
+]
+
 export const redactifySystemPrompt = `I want you to identify specific types of information in the text I provide and return the results in JSON format. Each result should include the following:
 1. **type**: What kind of information it is (e.g., "Company Name," "Email Address," etc.).
 2. **value**: The actual piece of information extracted from the input.

@@ -4,7 +4,7 @@ import ActionsToolbar from './components/ActionsToolbar'
 import { MantineProvider } from '@mantine/core'
 // import '@mantine/core/styles.css'
 // import './styles.css'
-import { MESSAGE_ACTIONS } from '../constants'
+import { MESSAGE_ACTIONS, REDACTIFY_ENABLED_SITES } from '../constants'
 
 console.info('contentScript is running edited')
 
@@ -559,6 +559,16 @@ function getCaretCoordinatesInInput(target: HTMLInputElement | HTMLTextAreaEleme
 function handleTextSelection(event: MouseEvent): void {
   const target = event.target as HTMLElement
 
+    const currentUrl = window.location.href;
+    const currentDomain = new URL(currentUrl).hostname; // Extract the domain name
+    if (REDACTIFY_ENABLED_SITES.includes(currentDomain)) {
+        console.log("REDACTIFY SITEEEEEE")
+    }else{
+        console.log("NOT REDACTIFY SITEEEEEE")
+    }
+
+    // if (currentUrl.includes(
+
   if (isTextInput(target)) {
     const inputElement = target as HTMLInputElement | HTMLTextAreaElement
     if (inputElement.selectionStart !== inputElement.selectionEnd) {
@@ -585,7 +595,18 @@ function handleTextSelection(event: MouseEvent): void {
       //   showPopupContainer(x, y)
       renderActionsToolbar(x, y)
     }
-  }
+  }else {
+    const selection = window.getSelection();
+    if (selection && !selection.isCollapsed) {
+      // Handle selection in plain text (e.g., paragraph or div)
+      const range = selection.getRangeAt(0).cloneRange();
+
+      //print selected text
+        const selectedText = range.toString();
+        console.log('selected text:', selectedText);
+    //   const rect = range.getBoundingClientRect();
+    }
+    }
 }
 
 /**
