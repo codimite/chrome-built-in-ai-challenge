@@ -22,25 +22,37 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
 
   // handle onClicks for rewriter
   const handleRewriterClick = async () => {
-    setLoading(true)
-    await onRewrite()
-
-    setTimeout(() => {
-      setLoading(false)
-      onClose()
-    }, 2000)
-  }
+    try {
+      setLoading(true); // Start the loading animation
+  
+      // Wait for the onRewrite function to complete
+      await onRewrite();
+  
+      // Optionally call onClose after the operation
+      onClose();
+    } catch (error) {
+      console.error('Error during Rewrite operation:', error);
+    } finally {
+      setLoading(false); // Stop the loading animation
+    }
+  };
 
   // handle onClicks for redact
   const handleReadctClick = async () => {
-    setLoading(true)
-    await onRedact()
-
-    setTimeout(() => {
-      setLoading(false)
-      onClose()
-    }, 2000)
-  }
+    try {
+      setLoading(true); // Start the loading animation
+  
+      // Wait for the onRedact function to complete
+      await onRedact();
+  
+      // Optionally call onClose after the operation
+      onClose();
+    } catch (error) {
+      console.error('Error during Redact operation:', error);
+    } finally {
+      setLoading(false); // Stop the loading animation
+    }
+  };
 
   return (
     <>
