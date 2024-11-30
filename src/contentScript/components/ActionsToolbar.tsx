@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, Progress, Text, Button, Group, Loader, Image } from '@mantine/core'
 import { BsPen } from 'react-icons/bs'
 import { IoMdSync } from 'react-icons/io'
@@ -23,36 +23,55 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
   // handle onClicks for rewriter
   const handleRewriterClick = async () => {
     try {
-      setLoading(true); // Start the loading animation
-  
+      setLoading(true) // Start the loading animation
+
       // Wait for the onRewrite function to complete
-      await onRewrite();
-  
+      await onRewrite()
+
       // Optionally call onClose after the operation
-      onClose();
+      onClose()
     } catch (error) {
-      console.error('Error during Rewrite operation:', error);
+      console.error('Error during Rewrite operation:', error)
     } finally {
-      setLoading(false); // Stop the loading animation
+      setLoading(false) // Stop the loading animation
     }
-  };
+  }
 
   // handle onClicks for redact
   const handleReadctClick = async () => {
     try {
-      setLoading(true); // Start the loading animation
-  
+      setLoading(true) // Start the loading animation
+
       // Wait for the onRedact function to complete
-      await onRedact();
-  
+      await onRedact()
+
       // Optionally call onClose after the operation
-      onClose();
+      onClose()
     } catch (error) {
-      console.error('Error during Redact operation:', error);
+      console.error('Error during Redact operation:', error)
     } finally {
-      setLoading(false); // Stop the loading animation
+      setLoading(false) // Stop the loading animation
     }
-  };
+  }
+
+  // handle onClicks for summarizer
+  const handleSummarizerClick = async () => {
+    try {
+      setLoading(true) // Start the loading animation
+
+      // Wait for the onRedact function to complete
+      await onSummarize()
+      console.log('Summarization complete')
+
+      // Optionally call onClose after the operation
+
+      onClose()
+    } catch (error) {
+      console.error('Error during Summarize operation:', error)
+    } finally {
+      setLoading(false) // Stop the loading animation
+    }
+  }
 
   return (
     <>
@@ -106,58 +125,62 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
             </div>
           </div>
         ) : (
-          <div
-            style={{
-              display: 'flex',
-              gap: '16px',
-              padding: '12px',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              backgroundColor: '#fff',
-              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'nowrap', alignItems: 'center' }}>
-              {/* <img
+          <>
+            <div
+              style={{
+                display: 'flex',
+                gap: '16px',
+                padding: '12px',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <div
+                style={{ display: 'flex', gap: '16px', flexWrap: 'nowrap', alignItems: 'center' }}
+              >
+                {/* <img
                 src={`chrome-extension://${chrome.runtime.id}/assets/logo.png`}
                 alt="Placeholder Logo"
                 height="20"
                 style={{ marginRight: '8px' }}
               /> */}
-              <Text
-                size="sm"
-                fw={500}
-                component="span"
-                style={{ color: 'black', cursor: 'pointer', margin: 0 }}
-                onClick={handleRewriterClick}
-              >
-                <BsPen size={12} style={{ marginRight: '4px' }} />
-                Rewrite
-              </Text>
+                <Text
+                  size="sm"
+                  fw={500}
+                  component="span"
+                  style={{ color: 'black', cursor: 'pointer', margin: 0 }}
+                  onClick={handleRewriterClick}
+                >
+                  <BsPen size={12} style={{ marginRight: '4px' }} />
+                  Rewrite
+                </Text>
 
-              <Text
-                size="sm"
-                fw={500}
-                component="span"
-                style={{ color: 'black', cursor: 'pointer', margin: 0 }}
-                onClick={handleReadctClick}
-              >
-                <IoMdSync size={16} style={{ marginRight: '4px' }} />
-                Redact
-              </Text>
+                <Text
+                  size="sm"
+                  fw={500}
+                  component="span"
+                  style={{ color: 'black', cursor: 'pointer', margin: 0 }}
+                  onClick={handleReadctClick}
+                >
+                  <IoMdSync size={16} style={{ marginRight: '4px' }} />
+                  Redact
+                </Text>
 
-              <Text
-                size="sm"
-                fw={500}
-                component="span"
-                style={{ color: 'black', cursor: 'pointer', margin: 0 }}
-                onClick={onSummarize}
-              >
-                <MdOutlineSegment size={16} style={{ marginRight: '4px' }} />
-                Summarize
-              </Text>
+                <Text
+                  size="sm"
+                  fw={500}
+                  component="span"
+                  style={{ color: 'black', cursor: 'pointer', margin: 0 }}
+                  onClick={handleSummarizerClick}
+                >
+                  <MdOutlineSegment size={16} style={{ marginRight: '4px' }} />
+                  Summarize
+                </Text>
+              </div>
             </div>
-          </div>
+          </>
         )}
         <style>
           {`
