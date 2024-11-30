@@ -2,23 +2,31 @@ import { Task } from './TaskQueue';
 import { redactifySystemPrompt } from '../constants';
 
 export class RedactifyModel {
-  private model: any;
+  private model: any = null;
 
   async init() {
     console.log("Initializing RedactifyModel");
+    try {
+      if (!ai || !ai.languageModel) {
+        throw new Error("AI is undefined or not properly initialized.");
+      }
 
-    const redactifyCapabilities = await ai.languageModel.capabilities();
-    this.model = await ai.languageModel.create({
-      temperature: redactifyCapabilities.defaultTemperature,
-      topK: redactifyCapabilities.defaultTopK,
-      systemPrompt: redactifySystemPrompt,
-    });
+      const redactifyCapabilities = await ai.languageModel.capabilities();
+      this.model = await ai.languageModel.create({
+        temperature: redactifyCapabilities.defaultTemperature,
+        topK: redactifyCapabilities.defaultTopK,
+        systemPrompt: redactifySystemPrompt,
+      });
 
-    console.log("Redactify model initialized");
+      console.log("Redactify model initialized");
+    } catch (error) {
+      console.error("Failed to initialize RedactifyModel:", error);
+      this.model = null;
+    }
   }
 
   isModelAvailable() {
-    return this.model !== undefined && this.model !== null;
+    return this.model !== null;
   }
 
   async processTask(task: Task<string>) {
