@@ -3,18 +3,23 @@ import { Task } from './TaskQueue';
 export class SummarizerModel {
   private model: any;
 
-  // Initialize the summarizer model
   async init() {
     console.log("Initializing SummarizerModel");
-
-    // Create the summarizer model
-    this.model = await ai.summarizer.create();
-    console.log("Summarizer model initialized");
+    try {
+        if (!ai || !ai.summarizer) {
+          throw new Error("AI is undefined or not properly initialized.");
+        }
+        
+        this.model = await ai.summarizer.create();
+        console.log("Summarizer model initialized");
+    } catch (error) {
+        console.error("Failed to initialize SummarizerModel:", error);
+        this.model = null;
+    }
   }
 
-  // Check if the model is available
   isModelAvailable() {
-    return this.model !== undefined && this.model !== null;
+    return this.model !== null;
   }
 
   // Process a task using the summarizer model

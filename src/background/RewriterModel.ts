@@ -2,22 +2,30 @@ import { Task } from './TaskQueue';
 import { rewriterContext } from '../constants';
 
 export class RewriterModel {
-  private model: any;
+  private model: any = null;
 
   async init() {
     console.log("Initializing RewriterModel");
+    try {
+        if (!ai || !ai.rewriter) {
+          throw new Error("AI is undefined or not properly initialized.");
+        }
 
-    this.model = await ai.rewriter.create({
-      tone: 'as-is',
-      length: 'as-is',
-      format: 'as-is',
-      sharedContext: rewriterContext,
-    });
+        this.model = await ai.rewriter.create({
+        tone: 'as-is',
+        length: 'as-is',
+        format: 'as-is',
+        sharedContext: rewriterContext,
+        });
     console.log("Rewriter model initialized");
+    } catch (error) {
+        console.error("Failed to initialize RewriterModel:", error);
+        this.model = null
+    }
   }
 
   isModelAvailable() {
-    return this.model !== undefined && this.model !== null;
+    return this.model !== null;
   }
 
   async processTask(task: Task<string>) {
