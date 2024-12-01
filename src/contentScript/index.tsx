@@ -1,6 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import ActionsToolbar from './components/ActionsToolbar'
+import SummarizerBlock from './components/SummarizerBlock'
 import { MantineProvider } from '@mantine/core'
 // import '@mantine/core/styles.css'
 // import './styles.css'
@@ -93,7 +94,7 @@ function renderActionsToolbar(x: number, y: number) {
       withGlobalClasses={false}
     >
       <ActionsToolbar
-        onSummarize={handleSummarize}
+        onSummarize={() => handleSummarize(x, y)}
         onRewrite={handleRewrite}
         onRedact={handleRedact}
         onClose={removeToolbar}
@@ -105,8 +106,52 @@ function renderActionsToolbar(x: number, y: number) {
   document.addEventListener('mousedown', handleToolbarOutsideClick)
 }
 
+// rendering summarizer block
+function renderSummarizerBlock(x: number, y: number, summarizedText: string) {
+  let summarizerContainer = document.getElementById('summarizer-container')
+  if (!summarizerContainer) {
+    summarizerContainer = document.createElement('div')
+    summarizerContainer.id = 'summarizer-container'
+    document.body.appendChild(summarizerContainer)
+  }
+
+  summarizerContainer.style.position = 'absolute'
+  summarizerContainer.style.left = `${x}px`
+  summarizerContainer.style.top = `${y}px`
+  summarizerContainer.style.zIndex = '1000'
+
+  //   const root = createRoot(toolbarContainer)
+  const shadowRoot = summarizerContainer.attachShadow({ mode: 'open' })
+  //   const root = createRoot(shadowRoot)
+
+  // Create a container for mantine content in shadow dom
+  const shadowContent = document.createElement('div')
+  shadowRoot.appendChild(shadowContent)
+
+  const root = createRoot(shadowContent)
+
+  root.render(
+    // <MantineProvider
+    //   getRootElement={getRootElement}
+
+    // >
+    <MantineProvider
+      cssVariablesSelector=":host"
+      withCssVariables={true}
+      getRootElement={() => summarizerContainer}
+      withStaticClasses={false}
+      withGlobalClasses={false}
+    >
+      <SummarizerBlock onClose={removeSummarizer} summarizedText={summarizedText} />
+    </MantineProvider>,
+  )
+
+  // to detect clicks ouside the toolbar
+  document.addEventListener('mousedown', handleSummarizerOutsideClick)
+}
+
 // handle summarizer onClick event
-function handleSummarize() {
+function handleSummarize(x: number, y: number) {
   console.log('summarizer clicked!')
   const selectedText = getSelectedText()
 
@@ -114,84 +159,95 @@ function handleSummarize() {
     const prompt = `${selectedText}`
     console.log(`sending ${prompt} as the selected text for Summarizer`)
 
-    chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.SUMMARIZE, data: prompt }, (response) => {
-      const replacementText = response.result
-      console.log(`received ${replacementText} as the reply text`)
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        { action: MESSAGE_ACTIONS.SUMMARIZE, data: prompt },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.error('Error sending message:', chrome.runtime.lastError)
+            reject(chrome.runtime.lastError)
+          } else {
+            let summarizedText = response.result
+            console.log(`received ${summarizedText} as the reply text`)
 
-      replaceStoredSelectedText(replacementText)
+            summarizedText = summarizedText.replace(/\*/g, '')
+
+            renderSummarizerBlock(x, y + 35, summarizedText)
+            resolve(response)
+          }
+        },
+      )
     })
   } else {
     removeToolbar()
+    return Promise.resolve()
   }
 }
 
 // handle rewriter onClick event
 async function handleRewrite() {
-    console.log('rewriter clicked!');
-  
-    const selectedText = getSelectedText();
-  
-    if (selectedText !== '') {
-      const prompt = `${selectedText}`;
-      console.log(`sending ${prompt} as the selected text for Rewrite`);
-  
-      // Return a promise to ensure completion
-      return new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage(
-          { action: MESSAGE_ACTIONS.REWRITE, data: prompt },
-          (response) => {
-            if (chrome.runtime.lastError) {
-              console.error('Error sending message:', chrome.runtime.lastError);
-              reject(chrome.runtime.lastError);
-            } else {
-              const replacementText = response.result;
-              console.log(`received ${replacementText} as the reply text`);
-  
-              replaceStoredSelectedText(replacementText);
-              resolve(response);
-            }
-          }
-        );
-      });
-    } else {
-      removeToolbar();
-      return Promise.resolve(); // Resolve immediately if there's no selected text
-    }
+  console.log('rewriter clicked!')
+
+  const selectedText = getSelectedText()
+
+  if (selectedText !== '') {
+    const prompt = `${selectedText}`
+    console.log(`sending ${prompt} as the selected text for Rewrite`)
+
+    // Return a promise to ensure completion
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.REWRITE, data: prompt }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('Error sending message:', chrome.runtime.lastError)
+          reject(chrome.runtime.lastError)
+        } else {
+          const replacementText = response.result
+          console.log(`received ${replacementText} as the reply text`)
+
+          replaceStoredSelectedText(replacementText)
+          resolve(response)
+        }
+      })
+    })
+  } else {
+    removeToolbar()
+    return Promise.resolve() // Resolve immediately if there's no selected text
+  }
 }
 
 // handle redact onClick event
 async function handleRedact() {
-    console.log('redact clicked!');
-  
-    const selectedText = getSelectedText();
-  
-    if (selectedText !== '') {
-      const prompt = `${selectedText}`;
-      console.log(`sending ${prompt} as the selected text for Redact`);
-  
-      // Return a promise to ensure completion
-      return new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage(
-          { action: MESSAGE_ACTIONS.REDACTIFY, data: prompt },
-          (response) => {
-            if (chrome.runtime.lastError) {
-              console.error('Error sending message:', chrome.runtime.lastError);
-              reject(chrome.runtime.lastError);
-            } else {
-              const replacementText = response.result;
-              console.log(`received ${replacementText} as the reply text`);
-  
-              replaceStoredSelectedText(replacementText);
-              resolve(response);
-            }
+  console.log('redact clicked!')
+
+  const selectedText = getSelectedText()
+
+  if (selectedText !== '') {
+    const prompt = `${selectedText}`
+    console.log(`sending ${prompt} as the selected text for Redact`)
+
+    // Return a promise to ensure completion
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        { action: MESSAGE_ACTIONS.REDACTIFY, data: prompt },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.error('Error sending message:', chrome.runtime.lastError)
+            reject(chrome.runtime.lastError)
+          } else {
+            const replacementText = response.result
+            console.log(`received ${replacementText} as the reply text`)
+
+            replaceStoredSelectedText(replacementText)
+            resolve(response)
           }
-        );
-      });
-    } else {
-      removeToolbar();
-      return Promise.resolve(); // Resolve immediately if there's no selected text
-    }
+        },
+      )
+    })
+  } else {
+    removeToolbar()
+    return Promise.resolve() // Resolve immediately if there's no selected text
   }
+}
 
 // to remove toolbar from the view
 const removeToolbar = () => {
@@ -201,7 +257,16 @@ const removeToolbar = () => {
   }
 }
 
+// to remove summarizer from the view
+const removeSummarizer = () => {
+  const summarizerContainer = document.getElementById('summarizer-container')
+  if (summarizerContainer) {
+    summarizerContainer.remove()
+  }
+}
+
 // handle outside click for actionsToolbar
+
 const handleToolbarOutsideClick = (event: MouseEvent) => {
   const toolbarContainer = document.getElementById('toolbar-container')
   if (toolbarContainer && !toolbarContainer.contains(event.target as Node)) {
@@ -209,6 +274,18 @@ const handleToolbarOutsideClick = (event: MouseEvent) => {
 
     // unmount the event listener after removing
     document.removeEventListener('mousedown', handleToolbarOutsideClick)
+  }
+}
+
+// handle outside click for summarizer block
+
+const handleSummarizerOutsideClick = (event: MouseEvent) => {
+  const summarizerContainer = document.getElementById('summarizer-container')
+  if (summarizerContainer && !summarizerContainer.contains(event.target as Node)) {
+    removeSummarizer()
+
+    // unmount the event listener after removing
+    document.removeEventListener('mousedown', handleSummarizerOutsideClick)
   }
 }
 
@@ -592,6 +669,7 @@ function handleTextSelection(event: MouseEvent): void {
       storedSelectionRange = selection.getRangeAt(0).cloneRange()
 
       const { x, y } = getCursorPositionForContentEditable(selection)
+      console.log('x and y :  ', x, y)
       //   showPopupContainer(x, y)
       renderActionsToolbar(x, y)
     }
@@ -621,31 +699,30 @@ function positionPopup(container: HTMLElement, x: number, y: number): void {
 // Add event listener for text selection
 // document.addEventListener('mouseup', handleTextSelection)
 chrome.storage.sync.get(['disabledWebsites'], (result) => {
-    const currentHostname = window.location.hostname; // Get the hostname
-    const disabledWebsites = result.disabledWebsites || [];
-  
-    if (!disabledWebsites.includes(currentHostname)) {
-      // Website is not disabled; enable the functionality
-        console.log('running the IntelliWrite extension on this website');
-      document.addEventListener('mouseup', handleTextSelection);
+  const currentHostname = window.location.hostname // Get the hostname
+  const disabledWebsites = result.disabledWebsites || []
+
+  if (!disabledWebsites.includes(currentHostname)) {
+    // Website is not disabled; enable the functionality
+    console.log('running the IntelliWrite extension on this website')
+    document.addEventListener('mouseup', handleTextSelection)
+  }
+})
+
+// Listen for changes in the disabled list
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === 'sync' && changes.disabledWebsites) {
+    const currentHostname = window.location.hostname
+    const disabledWebsites = changes.disabledWebsites.newValue || []
+
+    if (disabledWebsites.includes(currentHostname)) {
+      // Disable functionality if the website is in the disabled list
+      console.log('disabling the IntelliWrite extension on this website')
+      document.removeEventListener('mouseup', handleTextSelection)
+    } else {
+      // Enable functionality if the website is removed from the disabled list
+      console.log('enabling the IntelliWrite extension on this website')
+      document.addEventListener('mouseup', handleTextSelection)
     }
-  });
-  
-  // Listen for changes in the disabled list
-  chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace === 'sync' && changes.disabledWebsites) {
-      const currentHostname = window.location.hostname;
-      const disabledWebsites = changes.disabledWebsites.newValue || [];
-  
-      if (disabledWebsites.includes(currentHostname)) {
-        // Disable functionality if the website is in the disabled list
-        console.log('disabling the IntelliWrite extension on this website');
-        document.removeEventListener('mouseup', handleTextSelection);
-      } else {
-        // Enable functionality if the website is removed from the disabled list
-        console.log('enabling the IntelliWrite extension on this website');
-        document.addEventListener('mouseup', handleTextSelection);
-      }
-    }
-  });
-  
+  }
+})

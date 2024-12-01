@@ -53,6 +53,7 @@ export default defineManifest({
         'img/int-blue-34.png',
         'img/int-blue-48.png',
         'img/int-blue-128.png',
+        'img/darkmode-dark.png',
         'src/contentScript/styles.css',
       ],
       matches: ['<all_urls>'],
