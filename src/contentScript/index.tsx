@@ -5,7 +5,7 @@ import SummarizerBlock from './components/SummarizerBlock'
 import { MantineProvider } from '@mantine/core'
 // import '@mantine/core/styles.css'
 // import './styles.css'
-import { MESSAGE_ACTIONS, REDACTIFY_ENABLED_SITES } from '../constants'
+import { MESSAGE_ACTIONS, REDACTIFY_ENABLED_SITES, VISIBLE_BUTTONS, VisibleButtons } from '../constants'
 
 console.info('contentScript is running edited')
 
@@ -58,7 +58,7 @@ let darkMode: boolean = false
 const getRootElement = () => (typeof window === 'undefined' ? undefined : document.body)
 
 //rendering actions toolbar
-function renderActionsToolbar(x: number, y: number) {
+function renderActionsToolbar(x: number, y: number, visibleButtons: VisibleButtons) {
   let toolbarContainer = document.getElementById('toolbar-container')
   if (!toolbarContainer) {
     toolbarContainer = document.createElement('div')
@@ -98,6 +98,7 @@ function renderActionsToolbar(x: number, y: number) {
         onRewrite={handleRewrite}
         onRedact={handleRedact}
         onClose={removeToolbar}
+        visibleButtons={visibleButtons}
       />
     </MantineProvider>,
   )
@@ -656,7 +657,7 @@ function handleTextSelection(event: MouseEvent): void {
 
       const { x, y } = getCaretCoordinatesInInput(inputElement)
       //   showPopupContainer(x, y)
-      renderActionsToolbar(x, y)
+      renderActionsToolbar(x, y, VISIBLE_BUTTONS.REDACT_ONLY)
     }
   } else if (target.isContentEditable) {
     const selection = window.getSelection() // Get the current selection
@@ -671,7 +672,7 @@ function handleTextSelection(event: MouseEvent): void {
       const { x, y } = getCursorPositionForContentEditable(selection)
       console.log('x and y :  ', x, y)
       //   showPopupContainer(x, y)
-      renderActionsToolbar(x, y)
+      renderActionsToolbar(x, y, VISIBLE_BUTTONS.REWRITE_AND_SUMMARIZE)
     }
   }else {
     const selection = window.getSelection();

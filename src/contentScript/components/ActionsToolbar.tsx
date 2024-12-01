@@ -4,6 +4,7 @@ import { BsPen } from 'react-icons/bs'
 import { IoMdSync } from 'react-icons/io'
 import { MdOutlineSegment } from 'react-icons/md'
 import intelliwriteLogo from '../../assets/int-blue-16.png'
+import { VisibleButtons } from '../../constants'
 // import '@mantine/core/styles.css'
 
 interface ActionsToolbarProps {
@@ -11,12 +12,14 @@ interface ActionsToolbarProps {
   onRewrite: () => void
   onClose: () => void
   onRedact: () => void
+  visibleButtons: VisibleButtons;
 }
 export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
   onSummarize,
   onRewrite,
   onRedact,
   onClose,
+  visibleButtons,
 }) => {
   const [loading, setLoading] = useState(false)
 
@@ -149,6 +152,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                   width={25}
                   style={{ marginRight: '2px' }}
                 />
+                {visibleButtons.includes('rewrite') && (
                 <Text
                   size="sm"
                   fw={500}
@@ -159,7 +163,9 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                   <BsPen size={10} style={{ marginRight: '4px' }} />
                   Rewrite
                 </Text>
+              )}
 
+                {visibleButtons.includes('redact') && (
                 <Text
                   size="sm"
                   fw={500}
@@ -170,7 +176,9 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                   <IoMdSync size={15} style={{ marginRight: '4px' }} />
                   Redact
                 </Text>
+                )}
 
+                {visibleButtons.includes('summarize') && (
                 <Text
                   size="sm"
                   fw={500}
@@ -181,6 +189,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                   <MdOutlineSegment size={14} style={{ marginRight: '4px' }} />
                   Summarize
                 </Text>
+                )}
               </div>
             </div>
           </>

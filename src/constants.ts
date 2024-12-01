@@ -6,6 +6,19 @@ export const MESSAGE_ACTIONS = {
     RE_INIT: 'RE_INIT',
 };
 
+export const VISIBLE_BUTTONS = {
+    ALL: ['summarize', 'rewrite', 'redact'] as const,
+    REWRITE_ONLY: ['rewrite'] as const,
+    REDACT_ONLY: ['redact'] as const,
+    SUMMARIZE_ONLY: ['summarize'] as const,
+    REWRITE_AND_SUMMARIZE: ['rewrite', 'summarize'] as const,
+    REWRITE_AND_REDACT: ['rewrite', 'redact'] as const,
+    REDACT_AND_SUMMARIZE: ['redact','summarize'] as const,
+  } as const;
+  
+export type VisibleButtons = readonly (typeof VISIBLE_BUTTONS[keyof typeof VISIBLE_BUTTONS])[number][];
+
+
 export const REDACTIFY_ENABLED_SITES = [
     "chatgpt.com"
 ]
