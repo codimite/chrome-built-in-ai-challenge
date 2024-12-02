@@ -252,6 +252,10 @@ async function handleRedact() {
 
 // to remove toolbar from the view
 const removeToolbar = () => {
+    storedSelectionRange = null
+    storedSelectionStart = null
+    storedSelectionEnd = null
+    storedInputElement = null
   const toolbarContainer = document.getElementById('toolbar-container')
   if (toolbarContainer) {
     toolbarContainer.remove()
@@ -260,6 +264,10 @@ const removeToolbar = () => {
 
 // to remove summarizer from the view
 const removeSummarizer = () => {
+    storedSelectionRange = null
+    storedSelectionStart = null
+    storedSelectionEnd = null
+    storedInputElement = null
   const summarizerContainer = document.getElementById('summarizer-container')
   if (summarizerContainer) {
     summarizerContainer.remove()
