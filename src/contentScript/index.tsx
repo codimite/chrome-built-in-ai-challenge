@@ -636,16 +636,12 @@ function getCaretCoordinatesInInput(target: HTMLInputElement | HTMLTextAreaEleme
  */
 function handleTextSelection(event: MouseEvent): void {
   const target = event.target as HTMLElement
-
+    let redactifyEnabled = false;
     const currentUrl = window.location.href;
     const currentDomain = new URL(currentUrl).hostname; // Extract the domain name
     if (REDACTIFY_ENABLED_SITES.includes(currentDomain)) {
-        console.log("REDACTIFY SITEEEEEE")
-    }else{
-        console.log("NOT REDACTIFY SITEEEEEE")
+        redactifyEnabled = true;
     }
-
-    // if (currentUrl.includes(
 
   if (isTextInput(target)) {
     const inputElement = target as HTMLInputElement | HTMLTextAreaElement
@@ -656,8 +652,11 @@ function handleTextSelection(event: MouseEvent): void {
       storedSelectionEnd = inputElement.selectionEnd
 
       const { x, y } = getCaretCoordinatesInInput(inputElement)
-      //   showPopupContainer(x, y)
-      renderActionsToolbar(x, y, VISIBLE_BUTTONS.REDACT_ONLY)
+      if (redactifyEnabled) {
+        renderActionsToolbar(x, y, VISIBLE_BUTTONS.ALL)
+      }else{
+        renderActionsToolbar(x, y, VISIBLE_BUTTONS.REWRITE_AND_SUMMARIZE)
+    }
     }
   } else if (target.isContentEditable) {
     const selection = window.getSelection() // Get the current selection
@@ -670,20 +669,18 @@ function handleTextSelection(event: MouseEvent): void {
       storedSelectionRange = selection.getRangeAt(0).cloneRange()
 
       const { x, y } = getCursorPositionForContentEditable(selection)
-      console.log('x and y :  ', x, y)
-      //   showPopupContainer(x, y)
-      renderActionsToolbar(x, y, VISIBLE_BUTTONS.REWRITE_AND_SUMMARIZE)
+    if (redactifyEnabled) {
+        renderActionsToolbar(x, y, VISIBLE_BUTTONS.ALL)
+      }else{
+        renderActionsToolbar(x, y, VISIBLE_BUTTONS.REWRITE_AND_SUMMARIZE)
+    }
     }
   }else {
     const selection = window.getSelection();
-    if (selection && !selection.isCollapsed) {
-      // Handle selection in plain text (e.g., paragraph or div)
-      const range = selection.getRangeAt(0).cloneRange();
-
-      //print selected text
-        const selectedText = range.toString();
-        console.log('selected text:', selectedText);
-    //   const rect = range.getBoundingClientRect();
+    if (selection && !selection.isCollapsed) {// 
+      storedSelectionRange = selection.getRangeAt(0).cloneRange();
+        const { x, y } = getCursorPositionForContentEditable(selection)
+        renderActionsToolbar(x, y, VISIBLE_BUTTONS.SUMMARIZE_ONLY)
     }
     }
 }

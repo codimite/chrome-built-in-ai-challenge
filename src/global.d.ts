@@ -34,12 +34,22 @@ declare global {
     create: (options: RewriterOptions) => Promise<Rewriter>;
   }
 
+  // Define the options available when creating a summarizer
+  interface SummarizerOptions {
+    type?: 'key-points' | 'tl;dr' | 'teaser' | 'headline';
+    format?: 'plain-text' | 'markdown';
+    length?: 'short' | 'medium' | 'long';
+    // Add any additional parameters you need
+    [key: string]: any; // Allows for additional parameters
+  }
+
   interface Summarizer {
     summarize: (input: string) => Promise<string>;
   }
 
+  // Update the SummarizerModel interface to accept options
   interface SummarizerModel {
-    create: () => Promise<Summarizer>;
+    create: (options?: SummarizerOptions) => Promise<Summarizer>;
   }
 
   interface AI {

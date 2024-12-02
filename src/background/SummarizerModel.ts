@@ -10,7 +10,11 @@ export class SummarizerModel {
           throw new Error("AI is undefined or not properly initialized.");
         }
         
-        this.model = await ai.summarizer.create();
+        this.model = await ai.summarizer.create({
+            type: 'tl;dr', // Change to desired summary type ('key-points', 'tl;dr', 'teaser', 'headline')
+            format: 'markdown', // Change to desired format ('plain-text' or 'markdown')
+            length: 'short',    // Change to desired length ('short', 'medium', 'long')
+        });
         console.log("Summarizer model initialized");
     } catch (error) {
         console.warn("Failed to initialize SummarizerModel:", error);
