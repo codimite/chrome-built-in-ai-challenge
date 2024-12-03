@@ -21,7 +21,7 @@ import {
 console.info('Content script is running');
 
 /**
- * Helper function to check if the redactify feature is enabled for the current site.
+ * Helper function to check if the redactify feature should be enabled for the current site.
  */
 function isRedactifyEnabled(): boolean {
   const currentUrl = window.location.href;
@@ -39,7 +39,7 @@ function handleTextSelection(event: MouseEvent): void {
 
   if (isTextInput(target)) {
     const inputElement = target;
-    if (inputElement.selectionStart !== inputElement.selectionEnd) {
+    if (inputElement.selectionStart !== inputElement.selectionEnd) { // Input field or textarea selected 
       clearSelectionState();
       // Store selection for input or textarea
       storeSelectionState({
@@ -57,7 +57,7 @@ function handleTextSelection(event: MouseEvent): void {
     }
   } else if (target.isContentEditable) {
     const selection = window.getSelection();
-    if (selection && !selection.isCollapsed) {
+    if (selection && !selection.isCollapsed) { // ContentEditable element selected
       clearSelectionState();
       // Store selection for contentEditable element
       storeSelectionState({
@@ -76,7 +76,7 @@ function handleTextSelection(event: MouseEvent): void {
   } else {
     // Handle text selection in regular text (non-input, non-contentEditable)
     const selection = window.getSelection();
-    if (selection && !selection.isCollapsed) {
+    if (selection && !selection.isCollapsed) { // Regular text selected
       clearSelectionState();
       storeSelectionState({
         selectionRange: selection.getRangeAt(0).cloneRange(),
