@@ -6,9 +6,9 @@ import '@mantine/core/styles.css'
 import { MantineProvider } from '@mantine/core'
 
 ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
-  <React.StrictMode>
-    <MantineProvider defaultColorScheme="light">
-      <Popup />
-    </MantineProvider>
-  </React.StrictMode>,
+    <React.StrictMode>
+        <MantineProvider defaultColorScheme="light">
+            <Popup />
+        </MantineProvider>
+    </React.StrictMode>,
 )

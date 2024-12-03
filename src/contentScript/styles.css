@@ -9,13 +9,13 @@
     z-index: 10000;
     pointer-events: none;
     display: none;
-  }
-  
-  input:focus + #cursor-tooltip {
+}
+
+input:focus + #cursor-tooltip {
     display: block;
-  }
-  
-  .popup-container {
+}
+
+.popup-container {
     position: absolute;
     z-index: 10000;
     display: flex;

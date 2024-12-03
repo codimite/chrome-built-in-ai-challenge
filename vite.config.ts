@@ -6,27 +6,26 @@ import manifest from './src/manifest'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  return {
-    build: {
-      emptyOutDir: true,
-      outDir: 'build',
-      rollupOptions: {
-        output: {
-          chunkFileNames: 'assets/chunk-[hash].js',
+    return {
+        build: {
+            emptyOutDir: true,
+            outDir: 'build',
+            rollupOptions: {
+                output: {
+                    chunkFileNames: 'assets/chunk-[hash].js',
+                },
+            },
         },
-      },
-    },
 
-    plugins: [crx({ manifest }), react()],
+        plugins: [crx({ manifest }), react()],
 
-    server: {
-      port: 5173,
-      strictPort: true,
-      hmr: {
-        protocol: 'ws',
-        port: 5173,
-      },
-    },
-
-  }
+        server: {
+            port: 5173,
+            strictPort: true,
+            hmr: {
+                protocol: 'ws',
+                port: 5173,
+            },
+        },
+    }
 })
