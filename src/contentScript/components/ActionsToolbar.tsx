@@ -33,10 +33,8 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
         chrome.storage.sync.get(['colorScheme']).then((res) => {
             const scheme = res.colorScheme || 'light' // Default to 'light' if colorScheme is undefined or null
             setColorScheme(scheme)
-            console.log(`colorscheme set to ${scheme} when mounting`)
         })
     }, [])
-    console.log('colorScheme', colorscheme)
 
     // handle onClicks for rewriter
     const handleRewriterClick = async () => {

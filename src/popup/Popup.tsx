@@ -136,15 +136,21 @@ export const Popup = () => {
         })
     }
 
-    // go to optimization flag handler
-    const goToOptimizationFlag = () => {
-        console.log('fired')
-        window.location.href = 'chrome://flags'
+    const goToEnableDocs = () => {
+        window.open(
+            'https://docs.google.com/document/d/1WNpa6Av2RLLMX6_SilLm04yF_6S6ZSEVOxph_rJ5xug/edit?tab=t.0#heading=h.ceusu67tsdjj',
+            '_blank',
+        )
     }
 
-    const goToEnableDocs = () => {
-        window.open('https://www.google.com', '_blank')
+    const goToFeedback = () => {
+        window.open('https://forms.gle/ufKWFMC8Ra3zPSuLA', '_blank')
     }
+
+    const goToRateUs = () => {
+        window.open('https://forms.gle/rFWXbZvvqQfyJ6c39', '_blank')
+    }
+
     //toggling content
     const optionsForUser = [
         {
@@ -329,7 +335,7 @@ export const Popup = () => {
                                         justifyContent: 'space-between',
                                         gap: '2px',
                                     }}
-                                    onClick={goToEnableDocs}
+                                    onClick={goToRateUs}
                                 >
                                     <TbStars size={14} style={{ paddingTop: '1px' }} />
                                     Rate Us
@@ -345,7 +351,7 @@ export const Popup = () => {
                                         gap: '2px',
                                         paddingRight: '20px',
                                     }}
-                                    onClick={goToEnableDocs}
+                                    onClick={goToFeedback}
                                 >
                                     <LuMessagesSquare size={14} style={{ paddingTop: '1px' }} />
                                     Feedback

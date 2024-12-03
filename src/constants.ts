@@ -70,6 +70,15 @@ Output:
     "value": "Mike"
   }
 ]
+Input:
+SELECT field1, field2, field3 FROM company_info WHERE id = 'e24dcaf2-e2ee-4bde-a9ef-85fbf877bc4b' AND is_removed = 0 LIMIT 1;
+Output:
+[
+  {
+    "type": "ID",
+    "value": "e24dcaf2-e2ee-4bde-a9ef-85fbf877bc4b"
+  }
+]
 
 If you are not confident about extracting the information, simply return an empty JSON array: [].
 

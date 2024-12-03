@@ -93,11 +93,7 @@ export class RedactifyModel {
             task.sendResponse({ result: updatedData })
         } catch (error) {
             console.error('Error during redactify:', error)
-            if (error instanceof Error) {
-                task.sendResponse({ error: error.message })
-            } else {
-                task.sendResponse({ error }) // TODO: Make error handling better
-            }
+            task.sendResponse({ result: task.data })
         }
     }
 }
