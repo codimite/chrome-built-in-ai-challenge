@@ -9,7 +9,7 @@ import { handleSummarize, handleRewrite, handleRedact } from '../handlers/action
 /**
  * Renders the ActionsToolbar component at the specified coordinates.
  */
-export function renderActionsToolbar(x: number, y: number, visibleButtons: VisibleButtons): void {
+export function renderActionsToolbar(x: number, y: number, visibleButtons: VisibleButtons, summarizeBtnLabel = 'Summarize'): void {
     let toolbarContainer = document.getElementById('toolbar-container')
     if (!toolbarContainer) {
         toolbarContainer = document.createElement('div')
@@ -45,6 +45,7 @@ export function renderActionsToolbar(x: number, y: number, visibleButtons: Visib
                 onRedact={handleRedact}
                 onClose={removeToolbar}
                 visibleButtons={visibleButtons}
+                summarizeBtnLabel={summarizeBtnLabel}
             />
         </MantineProvider>,
     )

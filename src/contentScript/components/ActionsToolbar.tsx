@@ -13,6 +13,7 @@ interface ActionsToolbarProps {
     onClose: () => void
     onRedact: () => void
     visibleButtons: VisibleButtons
+    summarizeBtnLabel?: string 
 }
 export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
     onSummarize,
@@ -20,6 +21,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
     onRedact,
     onClose,
     visibleButtons,
+    summarizeBtnLabel = 'Summarize',
 }) => {
     const [loading, setLoading] = useState(false)
 
@@ -210,7 +212,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                                             size={14}
                                             style={{ marginRight: '4px' }}
                                         />
-                                        Summarize
+                                         {summarizeBtnLabel}
                                     </Text>
                                 )}
                             </div>
