@@ -24,8 +24,20 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
     summarizeBtnLabel = 'Summarize',
 }) => {
     const [loading, setLoading] = useState(false)
+    const [colorscheme, setColorScheme] = useState()
 
-    const intelliwriteLogo = chrome.runtime.getURL('img/int-blue-34.png')
+    const intelliwriteLogo_blue = chrome.runtime.getURL('img/int-blue-34.png')
+    const intelliwriteLogo_white = chrome.runtime.getURL('img/int-w-128.png')
+    // set the color scheme
+    useEffect(() => {
+      chrome.storage.sync.get(['colorScheme']).then((res) => {
+        const scheme = res.colorScheme || 'light'; // Default to 'light' if colorScheme is undefined or null
+        setColorScheme(scheme);
+        console.log(`colorscheme set to ${scheme} when mounting`);
+      })
+      
+    }, [])
+    console.log("colorScheme", colorscheme)
 
     // handle onClicks for rewriter
     const handleRewriterClick = async () => {
@@ -87,7 +99,11 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                     //   <Loader color="grape" size="xs" type="bars" />
                     <div
                         id="loader"
-                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
                     >
                         <div
                             className="loader-container"
@@ -140,7 +156,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                                 padding: '12px',
                                 border: '1px solid #ddd',
                                 borderRadius: '8px',
-                                backgroundColor: '#fff',
+                                backgroundColor: colorscheme === 'dark' ? '#333' : '#f9f9f9',
                                 boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
                             }}
                         >
@@ -153,7 +169,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                                 }}
                             >
                                 <img
-                                    src={intelliwriteLogo}
+                                    src={colorscheme === 'light' ? intelliwriteLogo_blue : intelliwriteLogo_white}
                                     alt="Placeholder Logo"
                                     height={25}
                                     width={25}
@@ -165,7 +181,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                                         fw={500}
                                         component="span"
                                         style={{
-                                            color: 'black',
+                                            color: colorscheme === 'dark' ? '#fff' : 'black',
                                             cursor: 'pointer',
                                             margin: 0,
                                             fontSize: 14,
@@ -183,7 +199,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                                         fw={500}
                                         component="span"
                                         style={{
-                                            color: 'black',
+                                            color: colorscheme === 'dark' ? '#fff' : 'black',
                                             cursor: 'pointer',
                                             margin: 0,
                                             fontSize: 14,
@@ -201,7 +217,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                                         fw={500}
                                         component="span"
                                         style={{
-                                            color: 'black',
+                                            color: colorscheme === 'dark' ? '#fff' : 'black',
                                             cursor: 'pointer',
                                             margin: 0,
                                             fontSize: 14,
