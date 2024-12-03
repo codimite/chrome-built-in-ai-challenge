@@ -8,14 +8,13 @@ interface SummarizerBlockProps {
 export const SummarizerBlock: React.FC<SummarizerBlockProps> = ({ onClose, summarizedText }) => {
     const [colorscheme, setColorScheme] = useState()
 
-    const logoURL = chrome.runtime.getURL('img/int-blue-34.png')
+    const logoURL_blue = chrome.runtime.getURL('img/int-blue-128.png')
+    const logoURL_white = chrome.runtime.getURL('img/int-w-128.png')
 
     useEffect(() => {
         chrome.storage.sync.get(['colorScheme']).then((res) => {
-            if (res.colorScheme) {
-                setColorScheme(res.colorScheme)
-                console.log(`colorscheme set to ${res.colorScheme} when mounting`)
-            }
+            const scheme = res.colorScheme || 'light'
+            setColorScheme(scheme)
         })
     }, [])
     return (
@@ -43,11 +42,11 @@ export const SummarizerBlock: React.FC<SummarizerBlockProps> = ({ onClose, summa
                 }}
             >
                 <img
-                    src={logoURL}
+                    src={colorscheme === 'light' ? logoURL_blue : logoURL_white}
                     alt="Logo"
                     style={{
                         opacity: 1,
-                        marginRight: '1px',
+                        marginRight: '8px',
                         width: '24px',
                         height: '24px',
                     }}

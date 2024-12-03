@@ -35,9 +35,11 @@ function handleTextSelection(event: MouseEvent): void {
 
     if (isTextInput(target)) {
         const inputElement = target
-        if (inputElement.selectionStart !== null &&
+        if (
+            inputElement.selectionStart !== null &&
             inputElement.selectionEnd !== null &&
-            inputElement.selectionStart !== inputElement.selectionEnd) {
+            inputElement.selectionStart !== inputElement.selectionEnd
+        ) {
             // Input field or textarea selected
             clearSelectionState()
             // Store selection for input or textarea
@@ -53,9 +55,16 @@ function handleTextSelection(event: MouseEvent): void {
                 ? VISIBLE_BUTTONS.ALL
                 : VISIBLE_BUTTONS.REWRITE_AND_SUMMARIZE
 
-            if (!ifTextHasMoreThanXNumberOfWords(inputElement.value.substring(inputElement.selectionStart, inputElement.selectionEnd))) {
-                renderActionsToolbar(x, y, visibleButtons, "Explain")
-            }else{
+            if (
+                !ifTextHasMoreThanXNumberOfWords(
+                    inputElement.value.substring(
+                        inputElement.selectionStart,
+                        inputElement.selectionEnd,
+                    ),
+                )
+            ) {
+                renderActionsToolbar(x, y, visibleButtons, 'Explain')
+            } else {
                 renderActionsToolbar(x, y, visibleButtons)
             }
         }
@@ -78,8 +87,8 @@ function handleTextSelection(event: MouseEvent): void {
                 : VISIBLE_BUTTONS.REWRITE_AND_SUMMARIZE
 
             if (!ifTextHasMoreThanXNumberOfWords(selection.getRangeAt(0).toString())) {
-                renderActionsToolbar(x, y, visibleButtons, "Explain")
-            }else{
+                renderActionsToolbar(x, y, visibleButtons, 'Explain')
+            } else {
                 renderActionsToolbar(x, y, visibleButtons)
             }
         }
@@ -98,8 +107,8 @@ function handleTextSelection(event: MouseEvent): void {
             const { x, y } = getCursorPositionForContentEditable(selection)
 
             if (!ifTextHasMoreThanXNumberOfWords(selection.getRangeAt(0).toString())) {
-                renderActionsToolbar(x, y, VISIBLE_BUTTONS.SUMMARIZE_ONLY, "Explain")
-            }else{
+                renderActionsToolbar(x, y, VISIBLE_BUTTONS.SUMMARIZE_ONLY, 'Explain')
+            } else {
                 renderActionsToolbar(x, y, VISIBLE_BUTTONS.SUMMARIZE_ONLY)
             }
         }
@@ -108,8 +117,8 @@ function handleTextSelection(event: MouseEvent): void {
 
 // Utility function to check if a string has more than X number of words
 function ifTextHasMoreThanXNumberOfWords(text: string, x: number = 3): boolean {
-    const wordCount = text.trim().split(/\s+/).length; // Count words in the string
-    return wordCount > x; // Return true if word count exceeds the threshold
+    const wordCount = text.trim().split(/\s+/).length // Count words in the string
+    return wordCount > x // Return true if word count exceeds the threshold
 }
 
 /**
