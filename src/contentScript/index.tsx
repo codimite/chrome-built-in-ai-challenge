@@ -130,11 +130,36 @@ chrome.storage.sync.get(['disabledWebsites'], (result) => {
     const currentHostname = window.location.hostname // Get the hostname
     const disabledWebsites = result.disabledWebsites || []
 
-    if (!disabledWebsites.includes(currentHostname)) {
-        // Website is not disabled; enable the functionality
-        console.log('IntelliWrite extension is enabled on this website')
-        document.addEventListener('mouseup', handleTextSelection)
+    // Function to check API status
+    const fetchApiStatus = async () => {
+        return new Promise((resolve) => {
+            chrome.runtime.sendMessage({ action: MESSAGE_ACTIONS.IS_APIS_READY }, (response) => {
+                const allApisEnabled =
+                    response.prompt === true &&
+                    response.rewriter === true &&
+                    response.summarizer === true
+                resolve(allApisEnabled)
+            })
+        })
     }
+
+    // Main function to handle checks and enable functionality
+    const initExtension = async () => {
+        const allApisEnabled = await fetchApiStatus()
+        if (allApisEnabled) {
+            if (!disabledWebsites.includes(currentHostname)) {
+                // Website is not disabled, and APIs are enabled
+                console.log('IntelliWrite extension is enabled on this website')
+                document.addEventListener('mouseup', handleTextSelection)
+            } else {
+                console.log('IntelliWrite extension is disabled on this website')
+            }
+        } else {
+            console.log('Required APIs are not enabled. Extension functionality is disabled.')
+        }
+    }
+
+    initExtension() // Run the initialization
 })
 
 // Listen for changes in the disabled websites list
