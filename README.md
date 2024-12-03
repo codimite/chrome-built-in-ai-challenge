@@ -1,11 +1,9 @@
 # Chrome Built-in AI Challenge (IntelliWrite)
 
-
 ## Architecture (model behavior)
 
 Following image shows how the model works in the background. There are three queues for each model works in First-In-First-Out (FIFO) order.
 ![Architecture Diagram](./model-architecture.png)
-
 
 ## Installing
 

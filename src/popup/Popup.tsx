@@ -67,9 +67,9 @@ export const Popup = () => {
 
     useEffect(() => {
         chrome.storage.sync.get(['colorScheme']).then((res) => {
-            const scheme = res.colorScheme || 'light'; // Default to 'light' if colorScheme is undefined or null
-            setColorScheme(scheme);
-            console.log(`colorscheme set to ${scheme} when mounting`);
+            const scheme = res.colorScheme || 'light' // Default to 'light' if colorScheme is undefined or null
+            setColorScheme(scheme)
+            console.log(`colorscheme set to ${scheme} when mounting`)
         })
     }, [])
 

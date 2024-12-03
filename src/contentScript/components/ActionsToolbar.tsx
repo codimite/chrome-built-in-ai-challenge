@@ -13,7 +13,7 @@ interface ActionsToolbarProps {
     onClose: () => void
     onRedact: () => void
     visibleButtons: VisibleButtons
-    summarizeBtnLabel?: string 
+    summarizeBtnLabel?: string
 }
 export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
     onSummarize,
@@ -30,14 +30,13 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
     const intelliwriteLogo_white = chrome.runtime.getURL('img/int-w-128.png')
     // set the color scheme
     useEffect(() => {
-      chrome.storage.sync.get(['colorScheme']).then((res) => {
-        const scheme = res.colorScheme || 'light'; // Default to 'light' if colorScheme is undefined or null
-        setColorScheme(scheme);
-        console.log(`colorscheme set to ${scheme} when mounting`);
-      })
-      
+        chrome.storage.sync.get(['colorScheme']).then((res) => {
+            const scheme = res.colorScheme || 'light' // Default to 'light' if colorScheme is undefined or null
+            setColorScheme(scheme)
+            console.log(`colorscheme set to ${scheme} when mounting`)
+        })
     }, [])
-    console.log("colorScheme", colorscheme)
+    console.log('colorScheme', colorscheme)
 
     // handle onClicks for rewriter
     const handleRewriterClick = async () => {
@@ -169,7 +168,11 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                                 }}
                             >
                                 <img
-                                    src={colorscheme === 'light' ? intelliwriteLogo_blue : intelliwriteLogo_white}
+                                    src={
+                                        colorscheme === 'light'
+                                            ? intelliwriteLogo_blue
+                                            : intelliwriteLogo_white
+                                    }
                                     alt="Placeholder Logo"
                                     height={25}
                                     width={25}
@@ -228,7 +231,7 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({
                                             size={14}
                                             style={{ marginRight: '4px' }}
                                         />
-                                         {summarizeBtnLabel}
+                                        {summarizeBtnLabel}
                                     </Text>
                                 )}
                             </div>

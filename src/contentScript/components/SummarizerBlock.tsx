@@ -13,8 +13,8 @@ export const SummarizerBlock: React.FC<SummarizerBlockProps> = ({ onClose, summa
 
     useEffect(() => {
         chrome.storage.sync.get(['colorScheme']).then((res) => {
-            const scheme = res.colorScheme || 'light';
-            setColorScheme(scheme);
+            const scheme = res.colorScheme || 'light'
+            setColorScheme(scheme)
         })
     }, [])
     return (
@@ -42,7 +42,7 @@ export const SummarizerBlock: React.FC<SummarizerBlockProps> = ({ onClose, summa
                 }}
             >
                 <img
-                    src={ colorscheme === 'light' ? logoURL_blue : logoURL_white }
+                    src={colorscheme === 'light' ? logoURL_blue : logoURL_white}
                     alt="Logo"
                     style={{
                         opacity: 1,
